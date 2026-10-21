@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Argentina Developer · Sala de prueba</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script defer src="/client.js"></script>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">🧉</span>
+          <div>Argentina Developer<small>Sala de prueba del bot</small></div>
+        </div>
+        <div class="section-label">COMANDOS PÚBLICOS</div>
+        <nav id="catalog" aria-label="Catálogo de comandos"></nav>
+        <div class="sidebar-note">
+          Todos los miembros pueden usarlos.<br />Sin roles especiales.
+        </div>
+      </aside>
+      <main>
+        <header class="channel">
+          <div>
+            <span class="hash">#</span> 😀-spam-comandos <span class="demo-badge">DEMO</span>
+          </div>
+          <span class="channel-status">Sólo datos ficticios</span>
+        </header>
+        <div class="notice">
+          <span class="status-dot"></span> Esta sala usa la lógica real del bot. No envía mensajes a
+          Discord.
+        </div>
+        <div class="demo-controls">
+          <label for="persona"
+            >Probando como
+            <select id="persona" aria-label="Miembro de prueba"></select
+          ></label>
+          <span class="clock" id="clock"></span>
+          <div class="time-controls"><button type="button" id="minute">+1 minuto</button></div>
+        </div>
+        <section
+          id="chat"
+          class="chat"
+          aria-label="Conversación de prueba"
+          aria-live="polite"
+        ></section>
+        <div class="quick" aria-label="Ejemplos rápidos">
+          <button data-command="desayuno?">☕ Desayuno</button
+          ><button data-command="almuerzo?">🍟 Almuerzo</button
+          ><button data-command="cena?">🍕 Cena</button
+          ><button data-command="grupo comando?">Grupo comando</button
+          ><button data-command="nivel">Mi nivel</button
+          ><button data-command="ranking">Ranking</button
+          ><button data-command="ayuda">Ayuda</button>
+        </div>
+        <form id="composer" class="composer">
+          <label class="sr-only" for="message">Mensaje para el bot</label
+          ><input
+            id="message"
+            maxlength="1800"
+            autocomplete="off"
+            placeholder="Escribí un comando o un mensaje normal…"
+          /><button id="send" type="submit">Probar ↵</button>
+        </form>
+        <div class="composer-hint">
+          Podés escribir <code>rank @Nico</code>, <code>ranking</code> o <code>ayuda</code>. Un
+          mensaje normal suma XP, hasta una vez por minuto.
+        </div>
+        <div id="error" class="error" role="alert"></div>
+      </main>
+      <aside class="members">
+        <div class="section-label">MIEMBROS DE PRUEBA</div>
+        <div id="members"></div>
+        <div class="legend">
+          Ranking por XP registrado por este bot. El total histórico de mensajes queda para una
+          próxima etapa.
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>
