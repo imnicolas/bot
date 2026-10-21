@@ -2,6 +2,7 @@
 
 Bot de Discord en TypeScript estricto con GIFs, respuestas aleatorias y ranking de participación. SQLite conserva XP y cooldowns por servidor para ejecutarlo en un LXC del homelab.
 
+**Probar la propuesta:** `npm ci` y `npm run preview`; abrí [la sala local](http://127.0.0.1:4371). Usa tres miembros ficticios y una SQLite en memoria, sin token ni conexión a Discord. [Recorrido de la demo](docs/public-commands.md).
 
 ## Comandos
 
@@ -53,12 +54,14 @@ src/
   database/             # SQLite, migraciones y backup
   cli/                  # Backup sin token
   features/levels/      # XP, cooldown y ranking
+  preview/              # Sesión de prueba con la lógica real
   shared/               # Selección aleatoria
-tests/                  # Comandos, eventos, persistencia
+preview/                # Interfaz local de la demo
+tests/                  # Comandos, eventos, persistencia y demo
 deploy/                 # Servicio systemd para LXC
 ```
 
-El contexto de los comandos es independiente de Discord. El adaptador construye embeds y controla las menciones; la ayuda usa el mismo registro de siete comandos.
+El contexto de los comandos es independiente de Discord. El adaptador construye embeds y controla las menciones; la ayuda y la demo usan el mismo registro de siete comandos.
 
 ## Verificar
 

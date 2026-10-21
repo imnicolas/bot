@@ -11,6 +11,7 @@
     "test": "tsx --test tests/*.test.ts",
     "check": "npm run typecheck && npm test && npm run build && npm run smoke",
     "smoke": "node scripts/smoke.mjs",
+    "preview": "npm run build && node dist/preview/server.js",
     "db:backup": "node dist/cli/backup.js"
   },
   "keywords": [],
