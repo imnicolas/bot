@@ -1,4 +1,6 @@
-# Bot del grupo
+# Pepe, bot de Argentina Developer
+
+<img src="assets/pepe.png" alt="Pepe, mascota de Argentina Developer" width="240" />
 
 Bot de Discord en TypeScript estricto con GIFs, respuestas aleatorias y ranking de participación. SQLite conserva XP y cooldowns por servidor para ejecutarlo en un LXC del homelab.
 
