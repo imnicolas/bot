@@ -54,9 +54,9 @@ function richText(text) {
 function appendMessage(author, content, embeds = [], bot = false) {
   const row = element('article', 'message');
   const avatar = element('div', 'avatar' + (bot ? ' bot' : ''), bot ? '🧉' : author.displayName[0]);
-  if (!bot && author.avatarUrl) {
+  if (bot || author.avatarUrl) {
     const image = element('img');
-    image.src = author.avatarUrl;
+    image.src = bot ? '/pepe.png' : author.avatarUrl;
     image.alt = '';
     avatar.replaceChildren(image);
   }
@@ -162,7 +162,7 @@ async function send(content) {
     renderState(result.state);
     appendMessage(result.actor, result.content);
     for (const reply of result.replies)
-      appendMessage({ displayName: 'Bot del grupo' }, reply.content, reply.embeds, true);
+      appendMessage({ displayName: 'Pepe' }, reply.content, reply.embeds, true);
     input.value = '';
   } catch (cause) {
     error.textContent = cause.message;

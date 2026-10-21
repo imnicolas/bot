@@ -59,6 +59,7 @@ const server = createServer(async (request, response) => {
       '/': { file: 'index.html', type: 'text/html' },
       '/client.js': { file: 'client.js', type: 'text/javascript' },
       '/styles.css': { file: 'styles.css', type: 'text/css' },
+      '/pepe.png': { file: '../assets/pepe.png', type: 'image/png' },
     };
     const asset = files[request.url ?? ''];
     if (request.method !== 'GET' || !asset) return json({ error: 'No encontrado.' }, 404);

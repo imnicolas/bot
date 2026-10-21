@@ -4,7 +4,11 @@ Una instancia del bot, Node.js 22 (desde 22.14) o 24+ y SQLite en el disco local
 
 ## Preparar e instalar
 
-Usá un LXC Debian o Ubuntu con systemd. Puede ser no privilegiado: este servicio no necesita Docker, nesting ni acceso a dispositivos del host. Necesita DNS y salida HTTPS/WebSocket hacia Discord.
+Usá un LXC Debian o Ubuntu con systemd, preferentemente no privilegiado. El bot no necesita Docker ni acceso a dispositivos del host. Necesita DNS y salida HTTPS/WebSocket hacia Discord.
+
+En Proxmox, systemd puede necesitar **Nesting** para aislar servicios del sistema. En Debian 12 con systemd 252 se verificó un fallo `226/NAMESPACE`, con `Permission denied` en `/run/systemd/unit-root/proc`, que se resolvió habilitando Nesting y reiniciando el contenedor. Revisá `systemctl --failed` y el journal al preparar el LXC; si aparece este fallo, habilitá esa opción para el contenedor afectado, conservando el modo no privilegiado y AppArmor. [Referencia de Proxmox](https://lore.proxmox.com/pve-devel/20251119142738.26840-4-r.obkircher%40proxmox.com/).
+
+Los siguientes pasos son para una primera instalación. Si ya existe el servicio, seguí [Actualizar](#actualizar) para conservar su configuración y sus datos.
 
 Dentro del LXC, como root:
 
@@ -21,7 +25,7 @@ Dentro del LXC, como root:
 
    Python, make y g++ permiten compilar el binding nativo de SQLite si la plataforma no dispone de un binario precompilado.
 
-3. Copiá la revisión del código que vas a desplegar a `/opt/discord-bot`, excluyendo `.env`, `node_modules`, `dist`, `.git` y `data`. No copies los módulos de macOS al LXC; se instalan para Linux en el siguiente paso. Para probar un PR antes del merge, usá su rama; `main` sólo incorpora cambios ya integrados.
+3. Copiá una revisión de `main` con CI exitoso a `/opt/discord-bot`, excluyendo `.env`, `node_modules`, `dist`, `.git` y `data`. No copies los módulos de macOS al LXC; se instalan para Linux en el siguiente paso. Probá los PR antes del merge en un entorno separado del servicio de producción.
 4. Compilá y verificá antes de instalar el servicio:
 
    ```sh
@@ -83,12 +87,18 @@ runuser -u discordbot -- sqlite3 /var/lib/discord-bot/bot.sqlite 'PRAGMA integri
 
 La comprobación debe imprimir `ok`. Después ejecutá `systemctl start discord-bot`, probá `nivel` y `ranking` y revisá el journal. El directorio anterior se conserva para diagnóstico; limpiá versiones antiguas cuando verifiques la recuperación.
 
+## CI y despliegue
+
+El despliegue al LXC es **manual, después del merge a `main` y con CI exitoso**. El workflow [Check](../.github/workflows/check.yml) corre en runners hospedados por GitHub (`ubuntu-latest`) con Node.js 22 y 24. Valida tipos, pruebas, compilación y smoke tests; también repite el smoke con las dependencias de producción. No hay una Action de despliegue.
+
+El administrador actualiza el servicio mediante su acceso habitual al homelab siguiendo los pasos de abajo. Mantené el token de Discord y las credenciales del homelab fuera de GitHub Actions, y no conectes un runner del LXC a este workflow: así la ejecución de código de un PR no recibe acceso al servicio ni a la red privada. Los checks usan datos temporales y no necesitan conectarse a Discord.
+
 ## Actualizar
 
 1. Creá un backup y copialo fuera del LXC.
 2. Ejecutá `systemctl stop discord-bot`.
-3. Actualizá `/opt/discord-bot`, conservando una copia de la versión anterior. No toques `/var/lib/discord-bot` ni `/etc/discord-bot.env`.
-4. Ejecutá `npm ci`, `npm run check` y `npm prune --omit=dev` en el checkout nuevo.
+3. Actualizá `/opt/discord-bot` a la revisión de `main` verificada en CI, conservando una copia de la versión anterior. No toques `/var/lib/discord-bot` ni `/etc/discord-bot.env`.
+4. Ejecutá `npm ci`, `npm run check`, `npm prune --omit=dev` y `npm run smoke` en el checkout nuevo. Continuá sólo si todos terminan correctamente.
 5. Si cambió el unit, instalalo de nuevo y ejecutá `systemctl daemon-reload`.
 6. Ejecutá `systemctl start discord-bot` y revisá el journal. Las migraciones se aplican en una transacción al arrancar.
 
