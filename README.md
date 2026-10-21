@@ -13,14 +13,16 @@ Todos son públicos, sin roles especiales. Aceptan texto natural o prefijo `!`.
 | Comando | Respuesta |
 | --- | --- |
 | `grupo comando?` | Convocatoria con GIF y mención al autor. |
-| `desayuno?` | Café, comida o una gastada al azar con GIF. |
-| `almuerzo?` | Respuesta con GIF; también acepta `aluerzo?`. |
-| `cena?` | Respuesta con GIF. |
+| `desayuno?` | Una chance entre tres de ganar desayuno; GIF de premio o de mala suerte. |
+| `almuerzo?` | Una chance entre tres de ganar almuerzo; alias `aluerzo?` y `lamuerzo?`. |
+| `cena?` | Una chance entre tres de ganar cena; GIF según el resultado. |
 | `nivel [@usuario]` | Tarjeta de nivel, XP y progreso. Alias: `rank`. |
 | `ranking` | Top 10 por XP de participación del servidor. Alias: `top`, `niveles`. |
 | `ayuda` | Este catálogo. Alias: `comandos`, `help`. |
 
 Las reacciones sólo pueden notificar al autor. Consultar niveles o rankings no notifica a los miembros mencionados. Las frases y GIFs se editan en `src/content/reactions.ts`; `{user}` se reemplaza por la mención del autor.
+
+Cada pedido de comida es un sorteo independiente: **1/3 de premio (≈33,3 %) y 2/3 de quedarse sin comida**. Primero se sortea el resultado y después una respuesta con su GIF correspondiente, de modo que agregar variantes no cambia las chances. Todos tienen la misma probabilidad; no hay cupos, cooldown ni premio de XP por pedir comida. `grupo comando?` siempre responde con su convocatoria habitual.
 
 ## Participación
 
