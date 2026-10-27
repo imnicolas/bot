@@ -3,8 +3,8 @@
 Ejecutá `npm run preview` y abrí `http://127.0.0.1:4371`. La sala usa el handler real con una SQLite en memoria, sin token ni conexión a Discord.
 
 1. Probá `mate?`, `vino?`, `té?`, `café?`, `ban?`, `medialunas?`, `buen dia` y `pala?`. Son reacciones públicas del [catálogo de ProBot](probot-commands.txt); `ban?` no modera ni expulsa a nadie. Con o sin tildes, `?` y prefijo `!` llegan al mismo comando.
-2. Probá `desayuno?`, `almuerzo?` y `cena?`: cada pedido tiene una chance entre tres de premio. `aluerzo?` y `lamuerzo?` piden almuerzo. Ganar o perder no modifica el XP.
-3. `grupo comando?` mantiene su convocatoria. `ayuda` muestra únicamente los comandos habilitados.
+2. Probá `desayuno?`, `almuerzo?` y `cena?`: cada pedido tiene una chance entre tres de premio. `aluerzo?` y `lamuerzo?` piden almuerzo. Ganar o perder no modifica el XP. Desayuno usa Kero/robo y almuerzo Sanji/Luffy, con sus GIFs originales; cena usa asado/Sasha. Cada resultado incluye un chiste y sólo menciona al autor.
+3. `grupo comando?` usa el GIF original `ahj0Fx.gif`. `ayuda` muestra únicamente los comandos habilitados.
 4. Por defecto, `rank`, `nivel`, `ranking`, `top` y `niveles` no responden y los mensajes no suman XP. La ayuda y la demo reflejan ese estado.
 5. Para revisar participación opcional, ejecutá `FEATURE_LEVELS_ENABLED=true npm run preview`. Lucía parte de 95 XP; un mensaje normal la lleva al nivel 1. Avanzá `+1 minuto` para probar el cooldown y consultá `nivel` o `ranking`.
 

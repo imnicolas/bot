@@ -37,7 +37,7 @@ Configurá estas variables en `.env` o `/etc/discord-bot.env` y reiniciá el ser
 
 Sólo se acepta `true` o `false`; una configuración inválida impide arrancar. Apagar una feature oculta sus comandos en ayuda y demo, e ignora sus aliases. Los comandos apagados tampoco suman XP. Apagar niveles pausa la participación sin borrar SQLite; se puede reactivar conservando XP y cooldowns.
 
-La fuente del catálogo es [comandos de ProBot](docs/probot-commands.txt). Las imágenes recuperadas se guardan en `assets/probot` y Discord las muestra desde el repositorio público, sin abrir puertos del LXC. `mate` y `pala` usan los reemplazos indicados en `src/content/probot.ts`; `aika` se excluyó a pedido del servidor porque su imagen original no está disponible. JPG y PNG se conservan como imágenes, sin convertirlos en GIFs. Las comidas mantienen su sorteo independiente.
+La fuente del catálogo es [comandos de ProBot](docs/probot-commands.txt). Las imágenes recuperadas se guardan en `assets/probot` y Discord las muestra desde el repositorio público, sin abrir puertos del LXC. `mate` y `pala` usan los reemplazos indicados en `src/content/probot.ts`; `aika` se excluyó a pedido del servidor porque su imagen original no está disponible. JPG y PNG se conservan como imágenes, sin convertirlos en GIFs. Desayuno y almuerzo conservan los GIFs originales para ganar/perder; cena conserva la foto de asado y usa a Sasha para el fracaso. Grupo comando usa su GIF original. Las fuentes y hashes están en [este catálogo](docs/probot-reaction-sources.json). Cada comida mantiene su sorteo independiente y un chiste según el resultado.
 
 ## Participación (opcional)
 

@@ -1,0 +1,51 @@
+[
+  {
+    "command": "desayuno",
+    "outcome": "win",
+    "file": "animesher.com_sakura-card-captor-kero-1228813.gif",
+    "source": "https://media.discordapp.net/attachments/1003394735693631578/1238127854668218390/animesher.com_sakura-card-captor-kero-1228813.gif?ex=6ae1ff6b&is=6ae0adeb&hm=d3e7dae3f728cd6d796066350403f6ee947fa932df60783b445ec5caf94e90a9&=",
+    "sha256": "7297bfdc7a6d28811344ad6a03e58895042a194e7b2016aa25a2da28468c7a5c"
+  },
+  {
+    "command": "desayuno",
+    "outcome": "lose",
+    "file": "tumblr_934345c79e0a95d977e8ad2574a5527a_51bcac4f_400.gif",
+    "source": "https://media.discordapp.net/attachments/1003394735693631578/1238127954282811442/tumblr_934345c79e0a95d977e8ad2574a5527a_51bcac4f_400.gif?ex=6ae1ff83&is=6ae0ae03&hm=c2e17fb6f608f76accfb67d6d474aea2879b40074f25a6b33209de1e11344341&=",
+    "sha256": "457b4cca399a12cf100c95178abcf470ba28694928f29c1b031a0bb4273746c6"
+  },
+  {
+    "command": "almuerzo",
+    "outcome": "win",
+    "file": "sanji-sanji-vin-smoke.gif",
+    "source": "https://media.discordapp.net/attachments/1003394735693631578/1153704814522417253/sanji-sanji-vin-smoke.gif?ex=6ae20bd6&is=6ae0ba56&hm=67afd2e496bd1870295f788c452aaf2e258e7dab005974deff3cda5c1cd49e04&=",
+    "sha256": "dc7ab1e351851dba89ace1d65fac26475c4ae1bbc275744a517404b67c3a0062"
+  },
+  {
+    "command": "almuerzo",
+    "outcome": "lose",
+    "file": "tumblr_88ea4ba0d6546130a18d7077b2a0c2c6_02943bb8_540.gif",
+    "source": "https://media.discordapp.net/attachments/1003394735693631578/1153703264458657823/tumblr_88ea4ba0d6546130a18d7077b2a0c2c6_02943bb8_540.gif?ex=6ae20a65&is=6ae0b8e5&hm=53bd50af26ffc356a4328c11e9d7d30e68da9215b613865f31a8f212492ec0e0&=",
+    "sha256": "87307150938de573a2c76de7f846f72607baab4c56abfe0564dcd756c9d5a4a5"
+  },
+  {
+    "command": "cena",
+    "outcome": "win",
+    "file": "contrafile-grill-com.jpg",
+    "source": "https://media-cdn.tripadvisor.com/media/photo-s/1c/91/70/f1/contrafile-grill-com.jpg",
+    "sha256": "49f4580f763e7fcee3216d01ace673dfd10f52987e77ce9b16765cd605b7d197"
+  },
+  {
+    "command": "grupo comando",
+    "outcome": "always",
+    "file": "ahj0Fx.gif",
+    "source": "https://i.makeagif.com/media/3-28-2026/ahj0Fx.gif",
+    "sha256": "ca73a1d8a29a1b9ad8161cb33d2a97953752b30e58bdf458e7828ef58ab9e849"
+  },
+  {
+    "command": "cena",
+    "outcome": "lose",
+    "file": "sasha-cena.gif",
+    "source": "https://tenor.com/view/attack-on-titans-sasha-blouse-eat-eating-munch-gif-5202848",
+    "sha256": "8242f0176d842ece7983ef033cee8aff2ee73c9be5fab5d9884e20a3435b58d0"
+  }
+]
