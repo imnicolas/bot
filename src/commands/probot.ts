@@ -9,8 +9,8 @@ export const probotCommands: readonly Command[] = probotMedia.map(({ name, file 
   aliases: [],
   description: `Reacción de ${name} del catálogo de ProBot.`,
   execute: ({ userId }) => ({
-    content: file ? `<@${userId}>` : `<@${userId}>, la imagen original de ${name} no está disponible por ahora.`,
-    ...(file ? { gif: probotAssetBase + file } : {}),
+    content: `<@${userId}>`,
+    gif: probotAssetBase + file,
     mentionAuthor: true,
   }),
 }));

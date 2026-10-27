@@ -16,7 +16,7 @@ Todos son públicos, sin roles especiales. Aceptan texto natural o prefijo `!`.
 | `desayuno?` | Una chance entre tres de ganar desayuno; GIF de premio o de mala suerte. |
 | `almuerzo?` | Una chance entre tres de ganar almuerzo; alias `aluerzo?` y `lamuerzo?`. |
 | `cena?` | Una chance entre tres de ganar cena; GIF según el resultado. |
-| `mate?`, `vino?`, `té?`, `café?`, `ban?`, `aika?`, `medialunas?`, `buen dia`, `pala?` | Reacciones del catálogo original de ProBot; `ban?` sólo muestra un meme. |
+| `mate?`, `vino?`, `té?`, `café?`, `ban?`, `medialunas?`, `buen dia`, `pala?` | Reacciones del catálogo original de ProBot; `ban?` sólo muestra un meme. |
 | `nivel [@usuario]` (opcional) | Tarjeta de nivel, XP y progreso. Alias: `rank`. |
 | `ranking` (opcional) | Top 10 por XP de participación del servidor. Alias: `top`, `niveles`. |
 | `ayuda` | Este catálogo. Alias: `comandos`, `help`. |
@@ -37,7 +37,7 @@ Configurá estas variables en `.env` o `/etc/discord-bot.env` y reiniciá el ser
 
 Sólo se acepta `true` o `false`; una configuración inválida impide arrancar. Apagar una feature oculta sus comandos en ayuda y demo, e ignora sus aliases. Los comandos apagados tampoco suman XP. Apagar niveles pausa la participación sin borrar SQLite; se puede reactivar conservando XP y cooldowns.
 
-La fuente del catálogo es [comandos de ProBot](docs/probot-commands.txt). Las imágenes recuperadas se guardan en `assets/probot` y Discord las muestra desde el repositorio público, sin abrir puertos del LXC. `mate` y `pala` usan los reemplazos indicados en `src/content/probot.ts`; `aika` conserva su enlace de referencia y responde con un aviso temporal: el host original está caído. JPG y PNG se conservan como imágenes, sin convertirlos en GIFs. Las comidas mantienen su sorteo independiente.
+La fuente del catálogo es [comandos de ProBot](docs/probot-commands.txt). Las imágenes recuperadas se guardan en `assets/probot` y Discord las muestra desde el repositorio público, sin abrir puertos del LXC. `mate` y `pala` usan los reemplazos indicados en `src/content/probot.ts`; `aika` se excluyó a pedido del servidor porque su imagen original no está disponible. JPG y PNG se conservan como imágenes, sin convertirlos en GIFs. Las comidas mantienen su sorteo independiente.
 
 ## Participación (opcional)
 

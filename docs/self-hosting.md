@@ -113,7 +113,7 @@ Si la configuración todavía tiene `DATA_FILE`, reemplazalo por `DATABASE_PATH`
 ## Comprobar en Discord
 
 - `desayuno?`, `almuerzo?`, `cena?` y `grupo comando?`: texto aleatorio, GIF y mención sólo al autor.
-- `ayuda`: sólo comandos habilitados, disponibles para cualquier miembro. `mate?`, `vino?`, `té?`, `café?`, `ban?`, `aika?`, `medialunas?`, `buen dia` y `pala?` usan el catálogo de ProBot.
+- `ayuda`: sólo comandos habilitados, disponibles para cualquier miembro. `mate?`, `vino?`, `té?`, `café?`, `ban?`, `medialunas?`, `buen dia` y `pala?` usan el catálogo de ProBot.
 - Con `FEATURE_LEVELS_ENABLED=false`, `rank`, `nivel`, `ranking`, `top` y `niveles` no responden ni se suma XP. Los siguientes checks de participación sólo aplican al habilitar esa feature.
 - Dos mensajes normales de al menos cinco caracteres: sólo el primero suma XP si pasan menos de 60 segundos.
 - `nivel`, `nivel @usuario` y `ranking`: consultan XP sin sumar ni notificar a otros miembros.
