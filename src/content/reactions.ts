@@ -1,3 +1,5 @@
+import { probotAssetBase } from './probot.js';
+
 export interface Reaction {
   readonly text: string;
   readonly gif: string;
@@ -9,86 +11,48 @@ export interface MealReactions {
   readonly lose: ReactionVariants;
 }
 
-// URLs directas: Discord muestra el GIF en un embed sin descargarlo en el bot.
-// Los catálogos de premio y rechazo no deciden la probabilidad del sorteo.
+// Originales de ProBot: docs/probot-reaction-sources.json conserva fuentes y hashes.
+// El resultado 1/3 se sortea antes de elegir una variante; agregar frases no cambia las chances.
 export const reactions = {
-  grupo: [
-    {
-      text: '¡Grupo comando presente, {user}! ¿Cuál es la misión?',
-      gif: 'https://media.giphy.com/media/ydgt7lD5ruT3OLw0Mv/giphy.gif',
-    },
-    {
-      text: 'Se activó el grupo comando, {user}. Traé el mate.',
-      gif: 'https://media.giphy.com/media/dzaUX7CAG0Ihi/giphy.gif',
-    },
-  ],
+  grupo: [{
+    text: '¡Grupo comando presente, {user}! ¿Cuál es la misión?',
+    gif: probotAssetBase + 'ahj0Fx.gif',
+  }],
   desayuno: {
-    win: [
-      {
-        text: 'Te tocó, {user}: café y medialunas para arrancar el día. ☕',
-        gif: 'https://media.giphy.com/media/XqwwAKkqXDR0EQ0BHJ/giphy.gif',
-      },
-      {
-        text: 'Ganaste, {user}. ¡Desayuno servido, a darle! 🥞',
-        gif: 'https://media.giphy.com/media/Lk4ESQ9fL1vy/giphy.gif',
-      },
-    ],
-    lose: [
-      {
-        text: 'Uy, llegaste tarde paps, {user}. No quedó ni una medialuna.',
-        gif: 'https://media.giphy.com/media/j2pOFyuTJqWj9S5qdE/giphy.gif',
-      },
-      {
-        text: 'Hoy no hubo suerte, {user}. Pepe se bajó el último desayuno. 😔',
-        gif: 'https://media.giphy.com/media/8UGoOaR1lA1uaAN892/giphy.gif',
-      },
-    ],
+    win: [{
+      text: 'Ligaste desayuno, {user}. Kero dejó de comer dos segundos y te guardó algo. 🥐',
+      gif: probotAssetBase + 'animesher.com_sakura-card-captor-kero-1228813.gif',
+    }],
+    lose: [{
+      text: 'No puede ser, {user}. Te volvieron a robar',
+      gif: probotAssetBase + 'tumblr_934345c79e0a95d977e8ad2574a5527a_51bcac4f_400.gif',
+    }],
   },
   almuerzo: {
-    win: [
-      {
-        text: '¡Te tocó el almuerzo, {user}! Sale un sánguche bien cargado. 🥪',
-        gif: 'https://media.giphy.com/media/TQt1xVuNhc9hK/giphy.gif',
-      },
-      {
-        text: 'Hoy comés como un campeón, {user}. ¡Ganaste el almuerzo!',
-        gif: 'https://media.giphy.com/media/44FvjefygrRTO/giphy.gif',
-      },
-    ],
-    lose: [
-      {
-        text: 'Sin almuerzo esta vuelta, {user}. La cocina te dijo que no. 🚫',
-        gif: 'https://media.giphy.com/media/j2pOFyuTJqWj9S5qdE/giphy.gif',
-      },
-      {
-        text: 'F, {user}. Se llevaron el último plato y te quedaste sin almuerzo. 😔',
-        gif: 'https://media.giphy.com/media/8UGoOaR1lA1uaAN892/giphy.gif',
-      },
-    ],
+    win: [{
+      text: '{user} es tu día de suerte! Sanji te guardó <3',
+      gif: probotAssetBase + 'sanji-sanji-vin-smoke.gif',
+    }],
+    lose: [{
+      text: 'Fuiste {user}, te la robó Luffy 🙁',
+      gif: probotAssetBase + 'tumblr_88ea4ba0d6546130a18d7077b2a0c2c6_02943bb8_540.gif',
+    }],
   },
   cena: {
-    win: [
-      {
-        text: 'Ganaste la cena, {user}. ¡Esa pizza es toda tuya! 🍕',
-        gif: 'https://media.giphy.com/media/bguSbMBFt3JHa/giphy.gif',
-      },
-      {
-        text: 'Hoy ligaste, {user}: Pepe te guardó la última porción para cenar. 🍕',
-        gif: 'https://media.giphy.com/media/mZWAgG8U4sXzW/giphy.gif',
-      },
-    ],
-    lose: [
-      {
-        text: 'Uy, {user}, ya cerramos la cocina. Esta vez te quedaste sin cena.',
-        gif: 'https://media.giphy.com/media/j2pOFyuTJqWj9S5qdE/giphy.gif',
-      },
-      {
-        text: 'No hubo suerte, {user}. De la cena quedó solamente la caja vacía. 😔',
-        gif: 'https://media.giphy.com/media/8UGoOaR1lA1uaAN892/giphy.gif',
-      },
-    ],
+    win: [{
+      text: 'Hoy cenás como protagonista de anime, {user}. El asado zafó de Luffy. 🥩',
+      gif: probotAssetBase + 'contrafile-grill-com.jpg',
+    }],
+    lose: [{
+      text: 'Fuiste, {user}. Sasha se comió tu cena antes de que terminara el opening. 🙁',
+      gif: probotAssetBase + 'sasha-cena.gif',
+    }],
   },
-} as const satisfies { grupo: ReactionVariants } & Record<
-  'desayuno' | 'almuerzo' | 'cena',
-  MealReactions
->;
+} as const satisfies { grupo: ReactionVariants } & Record<'desayuno' | 'almuerzo' | 'cena', MealReactions>;
+
+export const reactionAssetFiles = [...new Set([
+  ...reactions.grupo,
+  ...reactions.desayuno.win, ...reactions.desayuno.lose,
+  ...reactions.almuerzo.win, ...reactions.almuerzo.lose,
+  ...reactions.cena.win, ...reactions.cena.lose,
+].map(({ gif }) => gif.slice(probotAssetBase.length)))];

@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import { loadFeatures } from '../config/features.js';
 import { probotMedia } from '../content/probot.js';
+import { reactionAssetFiles } from '../content/reactions.js';
 import { DemoSession } from './session.js';
 
 const session = new DemoSession(undefined, loadFeatures(process.env));
@@ -63,7 +64,7 @@ const server = createServer(async (request, response) => {
       '/styles.css': { file: 'styles.css', type: 'text/css' },
       '/pepe.png': { file: '../assets/pepe.png', type: 'image/png' },
     };
-    for (const { file } of probotMedia) {
+    for (const file of [...probotMedia.map((media) => media.file), ...reactionAssetFiles]) {
       if (file) files[`/assets/probot/${file}`] = {
         file: `../assets/probot/${file}`, type: file.endsWith('.gif') ? 'image/gif' : 'image/jpeg',
       };
