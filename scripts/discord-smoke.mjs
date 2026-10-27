@@ -6,7 +6,7 @@ import { createBot } from '../dist/discord/client.js';
 // Objetos reales del SDK; sólo el transporte HTTP se sustituye. Nunca hace login.
 export async function verifyDiscordLifecycle(levels) {
   let clock = 1000;
-  const bot = createBot({ levels, now: () => new Date(clock), random: () => 0 });
+  const bot = createBot({ levels, features: { social: true, meals: true, levels: true }, now: () => new Date(clock), random: () => 0 });
   const fakeToken = 'fake-token-for-offline-smoke';
   bot.client.token = fakeToken;
   bot.client.rest.setToken(fakeToken);

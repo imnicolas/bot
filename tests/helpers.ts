@@ -20,5 +20,5 @@ export function fixture(t: TestContext) {
     rmSync(directory, { recursive: true, force: true });
   });
   const db = connect();
-  return { directory, path, db, connect, levels: new LevelStore(db) };
+  return { directory, path, db, connect, levels: new LevelStore(db), features: { social: true, meals: true, levels: true } };
 }

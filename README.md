@@ -2,7 +2,7 @@
 
 <img src="assets/pepe.png" alt="Pepe, mascota de Argentina Developer" width="240" />
 
-Bot de Discord en TypeScript estricto con GIFs, respuestas aleatorias y ranking de participación. SQLite conserva XP y cooldowns por servidor para ejecutarlo en un LXC del homelab.
+Bot de Discord en TypeScript estricto con los comandos de ProBot, GIFs y comidas aleatorias. El ranking es opcional y viene deshabilitado. SQLite conserva XP y cooldowns por servidor para ejecutarlo en un LXC del homelab.
 
 **Probar la propuesta:** `npm ci` y `npm run preview`; abrí [la sala local](http://127.0.0.1:4371). Usa tres miembros ficticios y una SQLite en memoria, sin token ni conexión a Discord. [Recorrido de la demo](docs/public-commands.md).
 
@@ -16,15 +16,30 @@ Todos son públicos, sin roles especiales. Aceptan texto natural o prefijo `!`.
 | `desayuno?` | Una chance entre tres de ganar desayuno; GIF de premio o de mala suerte. |
 | `almuerzo?` | Una chance entre tres de ganar almuerzo; alias `aluerzo?` y `lamuerzo?`. |
 | `cena?` | Una chance entre tres de ganar cena; GIF según el resultado. |
-| `nivel [@usuario]` | Tarjeta de nivel, XP y progreso. Alias: `rank`. |
-| `ranking` | Top 10 por XP de participación del servidor. Alias: `top`, `niveles`. |
+| `mate?`, `vino?`, `té?`, `café?`, `ban?`, `aika?`, `medialunas?`, `buen dia`, `pala?` | Reacciones del catálogo original de ProBot; `ban?` sólo muestra un meme. |
+| `nivel [@usuario]` (opcional) | Tarjeta de nivel, XP y progreso. Alias: `rank`. |
+| `ranking` (opcional) | Top 10 por XP de participación del servidor. Alias: `top`, `niveles`. |
 | `ayuda` | Este catálogo. Alias: `comandos`, `help`. |
 
 Las reacciones sólo pueden notificar al autor. Consultar niveles o rankings no notifica a los miembros mencionados. Las frases y GIFs se editan en `src/content/reactions.ts`; `{user}` se reemplaza por la mención del autor.
 
 Cada pedido de comida es un sorteo independiente: **1/3 de premio (≈33,3 %) y 2/3 de quedarse sin comida**. Primero se sortea el resultado y después una respuesta con su GIF correspondiente, de modo que agregar variantes no cambia las chances. Todos tienen la misma probabilidad; no hay cupos, cooldown ni premio de XP por pedir comida. `grupo comando?` siempre responde con su convocatoria habitual.
 
-## Participación
+## Features
+
+Configurá estas variables en `.env` o `/etc/discord-bot.env` y reiniciá el servicio:
+
+| Variable | Default | Controla |
+| --- | --- | --- |
+| `FEATURE_SOCIAL_ENABLED` | `true` | Reacciones de ProBot y `grupo comando`. |
+| `FEATURE_MEALS_ENABLED` | `true` | Desayuno, almuerzo y cena con probabilidad 1/3. |
+| `FEATURE_LEVELS_ENABLED` | `false` | XP, avisos de nivel, `nivel`/`rank` y `ranking`/`top`/`niveles`. |
+
+Sólo se acepta `true` o `false`; una configuración inválida impide arrancar. Apagar una feature oculta sus comandos en ayuda y demo, e ignora sus aliases. Los comandos apagados tampoco suman XP. Apagar niveles pausa la participación sin borrar SQLite; se puede reactivar conservando XP y cooldowns.
+
+La fuente del catálogo es [comandos de ProBot](docs/probot-commands.txt). Las imágenes recuperadas se guardan en `assets/probot` y Discord las muestra desde el repositorio público, sin abrir puertos del LXC. `mate` y `pala` usan los reemplazos indicados en `src/content/probot.ts`; `aika` conserva su enlace de referencia y responde con un aviso temporal: el host original está caído. JPG y PNG se conservan como imágenes, sin convertirlos en GIFs. Las comidas mantienen su sorteo independiente.
+
+## Participación (opcional)
 
 - Un mensaje nuevo de al menos 5 caracteres, sin espacios externos, puede otorgar **15–25 XP** al azar. El cooldown de **60 segundos por usuario y servidor** persiste después de reiniciar.
 - Bots, webhooks, privados, mensajes de sistema, comandos reconocidos y mensajes que empiezan por `!` o `/` no suman XP. No se guarda el contenido de los mensajes.
@@ -65,7 +80,7 @@ tests/                  # Comandos, eventos, persistencia y demo
 deploy/                 # Servicio systemd para LXC
 ```
 
-El contexto de los comandos es independiente de Discord. El adaptador construye embeds y controla las menciones; la ayuda y la demo usan el mismo registro de siete comandos.
+El contexto de los comandos es independiente de Discord. El adaptador construye embeds y controla las menciones; la ayuda y la demo usan el mismo registro, filtrado por las features habilitadas.
 
 ## Verificar
 

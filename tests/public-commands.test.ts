@@ -10,16 +10,16 @@ const members: readonly MemberProfile[] = [
   { id: '102', displayName: 'Nico', avatarUrl: 'https://cdn.discordapp.com/embed/avatars/1.png' },
 ];
 
-test('los siete comandos son públicos para cualquier miembro sin roles especiales', (t) => {
-  const { levels } = fixture(t);
-  const catalog = commandCatalog();
+test('los comandos son públicos para cualquier miembro sin roles especiales', (t) => {
+  const { levels, features } = fixture(t);
+  const catalog = commandCatalog(features);
   assert.deepEqual(
     catalog.map((c) => c.name),
-    ['grupo comando', 'desayuno', 'almuerzo', 'cena', 'nivel', 'ranking', 'ayuda'],
+    ['mate', 'vino', 'té', 'café', 'ban', 'aika', 'medialunas', 'buen dia', 'pala', 'grupo comando', 'desayuno', 'almuerzo', 'cena', 'nivel', 'ranking', 'ayuda'],
   );
   assert.ok(catalog.every((command) => command.access === 'public'));
   for (const userId of ['101', '102']) {
-    const context: CommandContext = { levels, userId, guildId: '1', random: () => 0, members };
+    const context: CommandContext = { levels, features, userId, guildId: '1', random: () => 0, members };
     for (const command of catalog) {
       const reply = executeCommand(command.name, context);
       assert.ok(reply, `${command.name} debe responder para ${userId}`);
@@ -29,8 +29,8 @@ test('los siete comandos son públicos para cualquier miembro sin roles especial
 });
 
 test('nivel de otro miembro consulta XP sin notificarlo y valida el destinatario', (t) => {
-  const { levels } = fixture(t);
-  const context: CommandContext = { levels, userId: '101', guildId: '1', random: () => 0, members };
+  const { levels, features } = fixture(t);
+  const context: CommandContext = { levels, features, userId: '101', guildId: '1', random: () => 0, members };
   levels.award('1', '102', 0, 25);
   const reply = executeCommand('!RÁNK <@!102>', context);
   assert.ok(reply);
@@ -47,8 +47,8 @@ test('nivel de otro miembro consulta XP sin notificarlo y valida el destinatario
 });
 
 test('los comandos retirados y sus alias dejan de ejecutarse', (t) => {
-  const { levels } = fixture(t);
-  const context: CommandContext = { levels, userId: '101', guildId: '1', random: () => 0 };
+  const { levels, features } = fixture(t);
+  const context: CommandContext = { levels, features, userId: '101', guildId: '1', random: () => 0 };
   for (const command of [
     'hola',
     'buenas',

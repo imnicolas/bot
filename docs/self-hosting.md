@@ -38,7 +38,7 @@ Dentro del LXC, como root:
    install -o root -g root -m 0600 deploy/discord-bot.env.example /etc/discord-bot.env
    ```
 
-5. Editá `/etc/discord-bot.env` y completá el token. Conservá `DATABASE_PATH=/var/lib/discord-bot/bot.sqlite`. No copies el token al unit de systemd ni al repositorio. El archivo lo lee systemd antes de cambiar al usuario `discordbot`.
+5. Editá `/etc/discord-bot.env` y completá el token. Conservá `DATABASE_PATH=/var/lib/discord-bot/bot.sqlite`. Dejá `FEATURE_SOCIAL_ENABLED=true`, `FEATURE_MEALS_ENABLED=true` y `FEATURE_LEVELS_ENABLED=false` para servir las reacciones y comidas con rank/XP apagados. No copies el token al unit de systemd ni al repositorio. El archivo lo lee systemd antes de cambiar al usuario `discordbot`.
 6. Activá **Message Content Intent**, invitá el bot y concedé los permisos del README. Después:
 
    ```sh
@@ -85,7 +85,7 @@ install -o discordbot -g discordbot -m 0600 /ruta/al/backup.sqlite /var/lib/disc
 runuser -u discordbot -- sqlite3 /var/lib/discord-bot/bot.sqlite 'PRAGMA integrity_check;'
 ```
 
-La comprobación debe imprimir `ok`. Después ejecutá `systemctl start discord-bot`, probá `nivel` y `ranking` y revisá el journal. El directorio anterior se conserva para diagnóstico; limpiá versiones antiguas cuando verifiques la recuperación.
+La comprobación debe imprimir `ok`. Después ejecutá `systemctl start discord-bot`, probá `mate?` y `ayuda` y revisá el journal. El directorio anterior se conserva para diagnóstico; limpiá versiones antiguas cuando verifiques la recuperación.
 
 ## CI y despliegue
 
@@ -113,7 +113,8 @@ Si la configuración todavía tiene `DATA_FILE`, reemplazalo por `DATABASE_PATH`
 ## Comprobar en Discord
 
 - `desayuno?`, `almuerzo?`, `cena?` y `grupo comando?`: texto aleatorio, GIF y mención sólo al autor.
-- `ayuda`: siete comandos públicos, disponibles para un miembro sin roles especiales.
+- `ayuda`: sólo comandos habilitados, disponibles para cualquier miembro. `mate?`, `vino?`, `té?`, `café?`, `ban?`, `aika?`, `medialunas?`, `buen dia` y `pala?` usan el catálogo de ProBot.
+- Con `FEATURE_LEVELS_ENABLED=false`, `rank`, `nivel`, `ranking`, `top` y `niveles` no responden ni se suma XP. Los siguientes checks de participación sólo aplican al habilitar esa feature.
 - Dos mensajes normales de al menos cinco caracteres: sólo el primero suma XP si pasan menos de 60 segundos.
 - `nivel`, `nivel @usuario` y `ranking`: consultan XP sin sumar ni notificar a otros miembros.
 - Después de 60 segundos, un nuevo mensaje elegible permite sumar otra vez.

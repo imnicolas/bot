@@ -14,6 +14,7 @@ function context(t: TestContext): CommandContext {
     guildId: '456',
     random: () => 0,
     levels: services.levels,
+    features: services.features,
   };
 }
 

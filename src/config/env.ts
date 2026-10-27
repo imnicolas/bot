@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { loadFeatures } from './features.js';
 
 export function databasePath(env: NodeJS.ProcessEnv): string {
   if (env['DATA_FILE']?.trim()) {
@@ -15,6 +16,7 @@ export function loadConfig(env: NodeJS.ProcessEnv) {
 
   return {
     token,
+    features: loadFeatures(env),
     databasePath: databasePath(env),
   };
 }
