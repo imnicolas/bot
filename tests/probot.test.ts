@@ -9,7 +9,8 @@ import { fixture } from './helpers.js';
 test('catálogo de ProBot conserva comandos y originales; sólo mate y pala tienen reemplazos', (t) => {
   const source = readFileSync(new URL('../docs/probot-commands.txt', import.meta.url), 'utf8').trim().split(/\n\s*\n/);
   const { levels } = fixture(t);
-  assert.deepEqual(probotMedia.map((m) => normalizeCommand(m.name)), source.map((b) => normalizeCommand(b.split('\n')[0] ?? '')));
+  assert.deepEqual(probotMedia.map((m) => normalizeCommand(m.name)), source.map((b) => normalizeCommand(b.split('\n')[0] ?? '')).filter((name) => name !== 'aika'));
+  assert.equal(executeCommand('aika?', { levels, userId: '123', guildId: '456', random: () => 0 }), undefined);
   for (const media of probotMedia) {
     if (!['mate', 'pala'].includes(media.name)) assert.equal(media.source, source.find((b) => normalizeCommand(b.split('\n')[0] ?? '') === normalizeCommand(media.name))?.split('\n')[1]);
     if (media.file) {
@@ -20,7 +21,7 @@ test('catálogo de ProBot conserva comandos y originales; sólo mate y pala tien
     for (const input of [`${media.name}?`, `!${normalizeCommand(media.name).toUpperCase()}`]) {
       const reply = executeCommand(input, { levels, userId: '123', guildId: '456', random: () => 0 });
       assert.ok(reply);
-      assert.equal(reply.gif, media.file ? probotAssetBase + media.file : undefined);
+      assert.equal(reply.gif, probotAssetBase + media.file);
       assert.deepEqual(toDiscordReply(reply, '123').allowedMentions?.users, ['123']);
     }
   }
