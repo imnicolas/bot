@@ -1,3 +1,4 @@
+import type { Features } from '../config/features.js';
 import type { LevelRepository } from '../features/levels/store.js';
 import type { RandomIndex } from '../shared/random.js';
 
@@ -8,6 +9,7 @@ export interface MemberProfile {
 }
 
 export interface CommandContext {
+  readonly features?: Features;
   readonly userId: string;
   readonly guildId: string;
   readonly random: RandomIndex;
@@ -37,6 +39,7 @@ export interface CommandReply {
 }
 
 export interface Command {
+  readonly feature?: keyof Features;
   readonly access: 'public';
   readonly category: 'social' | 'progress' | 'info';
   readonly name: string;

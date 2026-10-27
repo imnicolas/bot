@@ -6,8 +6,9 @@ import { LevelStore } from './features/levels/store.js';
 
 async function main(): Promise<void> {
   const config = loadConfig(process.env);
+  console.log('Features activas:', config.features);
   const db = openDatabase(config.databasePath);
-  const bot = createBot({ levels: new LevelStore(db) });
+  const bot = createBot({ levels: new LevelStore(db), features: config.features });
   let shutdown: Promise<void> | undefined;
   const stop = (): Promise<void> => {
     shutdown ??= (async () => {

@@ -105,7 +105,7 @@ function appendMessage(author, content, embeds = [], bot = false) {
     }
     if (embed.image) {
       const image = element('img', 'embed-image');
-      image.src = embed.image.url;
+      image.src = embed.image.url.replace('https://raw.githubusercontent.com/imnicolas/bot/main/assets/probot/', '/assets/probot/');
       image.alt = embed.title || 'GIF de respuesta';
       card.append(image);
     }
@@ -117,6 +117,10 @@ function appendMessage(author, content, embeds = [], bot = false) {
 }
 function renderState(next) {
   state = next;
+  document.querySelectorAll('[data-feature="levels"]').forEach((node) => { node.hidden = !state.features.levels; });
+  document.querySelectorAll('[data-command]').forEach((node) => {
+    node.hidden = !state.commands.some((command) => command.name === node.dataset.command.replace(/\?$/, ''));
+  });
   document.getElementById('clock').textContent = new Date(state.now).toLocaleString('es-UY', {
     timeZone: 'America/Montevideo',
     month: 'short',
@@ -132,9 +136,10 @@ function renderState(next) {
     const info = element('div');
     info.append(
       element('div', 'member-name', member.displayName),
-      element('div', 'member-level', `Nivel ${member.level} · ${member.xp} XP`),
+      element('div', 'member-level', state.features.levels ? `Nivel ${member.level} · ${member.xp} XP` : 'Miembro de prueba'),
     );
     const track = element('div', 'xp-track');
+    track.hidden = !state.features.levels;
     const fill = element('div', 'xp-fill');
     fill.style.width = `${(member.current / member.needed) * 100}%`;
     track.append(fill);
@@ -146,6 +151,7 @@ function renderState(next) {
         `${member.current} / ${member.needed} XP para el próximo nivel`,
       ),
     );
+    if (!state.features.levels) info.querySelector('.member-stats').hidden = true;
     row.append(info);
     members.append(row);
   }
@@ -212,8 +218,8 @@ document.getElementById('minute').addEventListener('click', () => advance(1));
       catalog.append(button);
     }
   }
-  await send('desayuno?');
-  await send('nivel');
+  await send(state.commands.some((c) => c.name === 'desayuno') ? 'desayuno?' : 'ayuda');
+  if (state.features.levels) await send('nivel');
 })().catch((cause) => {
   error.textContent = cause.message;
 });

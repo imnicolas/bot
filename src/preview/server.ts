@@ -2,9 +2,11 @@ import { createServer } from 'node:http';
 import type { IncomingMessage } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
+import { loadFeatures } from '../config/features.js';
+import { probotMedia } from '../content/probot.js';
 import { DemoSession } from './session.js';
 
-const session = new DemoSession();
+const session = new DemoSession(undefined, loadFeatures(process.env));
 const port = z.coerce
   .number()
   .int()
@@ -61,6 +63,11 @@ const server = createServer(async (request, response) => {
       '/styles.css': { file: 'styles.css', type: 'text/css' },
       '/pepe.png': { file: '../assets/pepe.png', type: 'image/png' },
     };
+    for (const { file } of probotMedia) {
+      if (file) files[`/assets/probot/${file}`] = {
+        file: `../assets/probot/${file}`, type: file.endsWith('.gif') ? 'image/gif' : 'image/jpeg',
+      };
+    }
     const asset = files[request.url ?? ''];
     if (request.method !== 'GET' || !asset) return json({ error: 'No encontrado.' }, 404);
     const bytes = await readFile(new URL(`../../preview/${asset.file}`, import.meta.url));

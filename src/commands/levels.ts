@@ -6,6 +6,7 @@ export const levelCommands: readonly Command[] = [
   {
     access: 'public',
     category: 'progress',
+    feature: 'levels',
     name: 'nivel',
     aliases: ['rank'],
     acceptsArgs: true,
@@ -34,6 +35,7 @@ export const levelCommands: readonly Command[] = [
   {
     access: 'public',
     category: 'progress',
+    feature: 'levels',
     acceptsArgs: true,
     name: 'ranking',
     aliases: ['top', 'niveles'],

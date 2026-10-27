@@ -1,3 +1,5 @@
+import { defaultFeatures } from '../config/features.js';
+import type { Features } from '../config/features.js';
 import { levelCommands } from './levels.js';
 import { socialCommands } from './social.js';
 import type { Command, CommandContext, CommandReply } from './types.js';
@@ -10,20 +12,21 @@ const help: Command = {
   name: 'ayuda',
   aliases: ['comandos', 'help'],
   description: 'Lista de comandos públicos.',
-  execute: () => ({
+  execute: ({ features }) => ({
     content:
       '**Comandos de Argentina Developer 🧉**\n' +
       Object.entries(categories)
+        .filter(([key]) => commandCatalog(features).some((c) => c.category === key))
         .map(
           ([key, title]) =>
             `\n**${title}**\n` +
-            [...commands, help]
+            commandCatalog(features)
               .filter((c) => c.category === key)
               .map((c) => `\`${c.usage ?? c.name}\` · ${c.description}`)
               .join('\n'),
         )
         .join('\n') +
-      '\n\nPara cualquier miembro. Acepto `desayuno?`, `!desayuno` y `aluerzo?`.',
+      '\n\nPara cualquier miembro. Acepto texto natural o prefijo `!`.',
   }),
 };
 
@@ -48,15 +51,16 @@ for (const command of [...commands, help]) {
   }
 }
 
-export function commandCatalog() {
-  return [...commands, help].map(({ name, aliases, description, usage, category, access }) => ({
-    name,
-    aliases,
-    description,
-    usage: usage ?? name,
-    category,
-    access,
-  }));
+export function commandEnabled(command: Command, features: Features = defaultFeatures): boolean {
+  return !command.feature || features[command.feature];
+}
+
+export function commandCatalog(features: Features = defaultFeatures) {
+  return [...commands, help]
+    .filter((command) => commandEnabled(command, features))
+    .map(({ name, aliases, description, usage, category, access }) => ({
+      name, aliases, description, usage: usage ?? name, category, access,
+    }));
 }
 
 export function parseCommand(content: string): { command: Command; args: string } | undefined {
@@ -74,5 +78,7 @@ export function parseCommand(content: string): { command: Command; args: string 
 
 export function executeCommand(content: string, context: CommandContext): CommandReply | undefined {
   const parsed = parseCommand(content);
-  return parsed?.command.execute(context, parsed.args);
+  return parsed && commandEnabled(parsed.command, context.features)
+    ? parsed.command.execute(context, parsed.args)
+    : undefined;
 }

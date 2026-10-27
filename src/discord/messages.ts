@@ -1,5 +1,7 @@
 import type { Message, MessageReplyOptions } from 'discord.js';
-import { executeCommand } from '../commands/registry.js';
+import { defaultFeatures } from '../config/features.js';
+import type { Features } from '../config/features.js';
+import { executeCommand, parseCommand } from '../commands/registry.js';
 import type { CommandReply, MemberProfile } from '../commands/types.js';
 import type { LevelRepository } from '../features/levels/store.js';
 import { levelProgress } from '../features/levels/store.js';
@@ -42,6 +44,7 @@ export function toDiscordReply(reply: CommandReply, userId: string): MessageRepl
 }
 
 export interface MessageServices {
+  readonly features?: Features;
   readonly levels: LevelRepository;
   readonly now?: () => Date;
   readonly random?: RandomIndex;
@@ -56,6 +59,7 @@ export async function handleMessage(
     const now = services.now?.() ?? new Date();
     const random = services.random ?? randomIndex;
     const reply = executeCommand(message.content, {
+      features: services.features ?? defaultFeatures,
       userId: message.author.id,
       guildId: message.guildId,
       random,
@@ -64,7 +68,10 @@ export async function handleMessage(
       ...(message.members ? { members: message.members } : {}),
     });
     if (reply) await message.reply(toDiscordReply(reply, message.author.id));
-    else if (message.content.trim().length >= 5 && !/^[!/]/.test(message.content.trim())) {
+    else if (
+      (services.features ?? defaultFeatures).levels && !parseCommand(message.content) &&
+      message.content.trim().length >= 5 && !/^[!/]/.test(message.content.trim())
+    ) {
       try {
         const before = levelProgress(
           services.levels.profile(message.guildId, message.author.id).xp,

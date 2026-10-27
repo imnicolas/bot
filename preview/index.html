@@ -37,7 +37,7 @@
             <select id="persona" aria-label="Miembro de prueba"></select
           ></label>
           <span class="clock" id="clock"></span>
-          <div class="time-controls"><button type="button" id="minute">+1 minuto</button></div>
+          <div class="time-controls" data-feature="levels"><button type="button" id="minute">+1 minuto</button></div>
         </div>
         <section
           id="chat"
@@ -50,6 +50,8 @@
           ><button data-command="almuerzo?">🍟 Almuerzo</button
           ><button data-command="cena?">🍕 Cena</button
           ><button data-command="grupo comando?">Grupo comando</button
+          ><button data-command="mate?">🧉 Mate</button
+          ><button data-command="pala?">Palan’t</button
           ><button data-command="nivel">Mi nivel</button
           ><button data-command="ranking">Ranking</button
           ><button data-command="ayuda">Ayuda</button>
@@ -64,15 +66,15 @@
           /><button id="send" type="submit">Probar ↵</button>
         </form>
         <div class="composer-hint">
-          Cada comida tiene 1 chance entre 3 de premio. Podés escribir <code>rank @Nico</code>,
-          <code>ranking</code> o <code>ayuda</code>. Un mensaje normal suma XP, hasta una vez por minuto.
+          Cada comida tiene 1 chance entre 3 de premio. Probá <code>mate?</code>, <code>café?</code>
+          o <code>ayuda</code> para ver los comandos habilitados.
         </div>
         <div id="error" class="error" role="alert"></div>
       </main>
       <aside class="members">
         <div class="section-label">MIEMBROS DE PRUEBA</div>
         <div id="members"></div>
-        <div class="legend">
+        <div class="legend" data-feature="levels">
           Ranking por XP registrado por este bot. El total histórico de mensajes queda para una
           próxima etapa.
         </div>

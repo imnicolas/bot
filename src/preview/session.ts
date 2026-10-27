@@ -1,3 +1,5 @@
+import { defaultFeatures } from '../config/features.js';
+import type { Features } from '../config/features.js';
 import type { MessageReplyOptions } from 'discord.js';
 import { commandCatalog } from '../commands/registry.js';
 import type { MemberProfile } from '../commands/types.js';
@@ -19,7 +21,8 @@ export class DemoSession {
   private readonly levels = new LevelStore(this.db);
   private clock = new Date('2026-10-20T12:00:00-03:00').getTime();
 
-  constructor(private readonly random?: RandomIndex) {
+  constructor(private readonly random?: RandomIndex, private readonly features: Features = defaultFeatures) {
+    if (!features.levels) return;
     for (const [index, member] of demoMembers.entries()) {
       const count = [4, 22, 10][index] ?? 0;
       for (let step = 0; step < count; step++) {
@@ -40,7 +43,8 @@ export class DemoSession {
         const { xp } = this.levels.profile('1', member.id);
         return { ...member, xp, ...levelProgress(xp) };
       }),
-      commands: commandCatalog(),
+      features: this.features,
+      commands: commandCatalog(this.features),
     };
   }
 
@@ -68,6 +72,7 @@ export class DemoSession {
       },
       {
         levels: this.levels,
+        features: this.features,
         now: () => new Date(this.clock),
         ...(this.random ? { random: this.random } : {}),
       },
