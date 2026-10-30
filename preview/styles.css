@@ -1,4 +1,5 @@
 [hidden] { display: none !important; }
+.gift-demo-link { color: #b9e6c8; line-height: 2; }
 :root {
   color-scheme: dark;
   --page: #1e1f22;

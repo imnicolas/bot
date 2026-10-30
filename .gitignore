@@ -8,3 +8,9 @@ data/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+# Padrones privados: importar desde data/ o una ruta externa. Sólo ejemplos CSV en Git.
+*.xlsx
+*.xls
+*.ods
+*.csv
+!examples/*.csv

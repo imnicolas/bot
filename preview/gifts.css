@@ -1,0 +1,59 @@
+:root { --gift-accent: #b9e6c8; }
+.gift-app { display: grid; grid-template-columns: 284px minmax(0, 1fr); min-height: 100vh; max-width: 1700px; margin: auto; }
+.gift-sidebar { background: #202523; padding: 28px 24px; border-right: 1px solid #36443b; }
+.back { color: #b7c6bd; text-decoration: none; font-size: 12px; }
+.gift-brand { display: flex; align-items: center; gap: 12px; font-size: 23px; font-weight: 700; margin: 36px 0; }
+.gift-brand img { width: 58px; height: 58px; border-radius: 18px; }
+.gift-brand small { display: block; font-size: 11px; font-weight: 400; margin-top: 4px; color: #a7b9ac; }
+.eyebrow { font-size: 10px; letter-spacing: 1.4px; color: #a7b9ac; font-weight: 700; }
+h1 { font-size: 25px; line-height: 1.25; letter-spacing: -.8px; margin: 15px 0; }
+.muted { color: #aeb8b2; font-size: 12px; line-height: 1.7; }
+.field { display: block; font-size: 12px; margin: 28px 0 9px; }
+.gift-app select { background: #303934; border: 1px solid #526357; color: #f2f6f3; padding: 10px; border-radius: 8px; max-width: 100%; }
+.gift-sidebar select, .gift-sidebar .primary { width: 100%; }
+.gift-sidebar .primary { margin-top: 12px; padding: 12px; }
+.primary, .success { background: var(--gift-accent); color: #172b1e; border-color: var(--gift-accent); font-weight: 650; }
+.primary:hover, .success:hover { background: #d6f5df; }
+.rule-card { padding: 19px 16px; background: #2a342d; border: 1px solid #44574a; border-radius: 12px; margin-top: 32px; }
+.rule-card strong { color: var(--gift-accent); font-size: 17px; }
+.rule-card p { font-size: 11px; color: #c4d1c9; line-height: 1.9; margin-bottom: 0; }
+.sandbox-note { font-size: 11px; line-height: 1.8; color: #a7b9ac; margin-top: 24px; }
+.sandbox-note .status-dot { display: inline-block; margin-right: 5px; }
+.gift-main { background: #242927; padding-bottom: 20px; }
+.gift-header { padding: 23px 30px; border-bottom: 1px solid #3a433e; display: flex; justify-content: space-between; gap: 16px; }
+.gift-header > div { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+.gift-header .demo-badge { background: #3d5b47; color: #c5f0d3; }
+.scenario-head { display: flex; justify-content: space-between; gap: 20px; padding: 30px 30px 15px; align-items: center; }
+h2 { font-size: 26px; letter-spacing: -.6px; margin: 9px 0; }
+.scenario-head p { margin: 0; max-width: 590px; }
+.date-card { min-width: 160px; text-align: right; }
+.date-card small { font-size: 9px; color: #a7b9ac; letter-spacing: 1px; }
+.date-card strong { display: block; font-size: 20px; margin: 6px 0; }
+.date-card span { font-size: 10px; color: #aeb8b2; }
+.steps { display: grid; grid-template-columns: repeat(4,1fr); list-style: none; margin: 15px 30px 24px; padding: 0; gap: 9px; }
+.steps li { border-top: 3px solid #46504a; padding-top: 10px; color: #8d9c92; font-size: 11px; }
+.steps li.done { border-color: var(--gift-accent); color: #d6e9dc; }
+.workspace { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; margin: 0 30px; }
+.conversation { border: 1px solid #445048; border-radius: 12px; overflow: hidden; background: #2c322e; }
+.pane-title { display: flex; justify-content: space-between; align-items: center; gap: 9px; padding: 15px 16px; background: #303a33; font-size: 12px; font-weight: 600; }
+.pane-title small { font-size: 10px; color: #b5c6bb; font-weight: 400; }
+.gift-chat { padding: 18px; min-height: 200px; }
+.empty-state { display: grid; place-content: center; text-align: center; min-height: 160px; color: #a4b0a8; font-size: 12px; line-height: 1.8; white-space: pre-line; }
+.gift-message { border-left: 3px solid #9bd4ad; background: #242c27; border-radius: 4px 8px 8px 4px; padding: 14px; font-size: 12px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; margin-bottom: 12px; }
+.gift-message strong { display: block; color: #d6efde; margin-bottom: 6px; font-size: 11px; }
+.private-pane .gift-message { border-color: #c5b3eb; }
+.participation { border-top: 1px solid #445048; padding: 14px 18px; }
+.participation label { font-size: 11px; margin-right: 7px; }
+.participation select { padding: 5px; font-size: 11px; }
+.participation > div { display: flex; flex-wrap: wrap; gap: 7px; margin: 13px 0; }
+.participation small { font-size: 10px; color: #aeb8b2; }
+.operation-bar { border: 1px solid #445048; background: #2c342e; border-radius: 10px; padding: 16px 18px; margin: 18px 30px; }
+.operation-bar strong { font-size: 13px; }.operation-bar p { margin: 6px 0 14px; }
+.operation-buttons { display: flex; flex-wrap: wrap; gap: 8px; }.operation-buttons button { font-size: 11px; }
+.bottom-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 30px; margin: 25px 30px; }
+.audit ol { padding-left: 18px; font-size: 11px; line-height: 1.8; color: #b8c7bd; max-height: 170px; overflow: auto; }
+.audit li { padding-bottom: 8px; }#attendees { padding-top: 12px; }#count { background: #455c4c; border-radius: 4px; padding: 2px 6px; margin-left: 4px; }
+.gift-main .composer { margin: 0 30px; background: #39423c; }.gift-main .composer button { background: #5b8265; border-color: #5b8265; }
+.command-help { margin: 10px 30px; font-size: 10px; color: #9eafa3; line-height: 1.7; }#gift-error { color: #ffc2bb; margin: 12px 30px; font-size: 12px; min-height: 18px; }
+@media(max-width:1100px) { .gift-app { grid-template-columns: 240px minmax(0,1fr); }.gift-sidebar { padding: 24px 18px; }.workspace { grid-template-columns: 1fr; }.gift-chat { min-height: 110px; }.empty-state { min-height: 90px; }.date-card { min-width: 130px; }.pane-title small { display: block; } }
+@media(max-width:720px) { .gift-app { display: block; }.gift-sidebar { padding: 20px; }.gift-brand { margin: 22px 0; }h1 { font-size: 24px; }h1 br { display:none; }.rule-card,.sandbox-note { margin-top: 16px; }.gift-header { padding: 16px 20px; flex-wrap: wrap; }.scenario-head { padding: 24px 20px 10px; display: block; }.date-card { text-align: left; margin-top: 20px; }h2 { font-size: 24px; }.workspace,.operation-bar { margin-left:20px; margin-right:20px; }.steps { margin-left:20px; margin-right:20px; gap:6px; }.steps li { font-size:10px; }.bottom-grid { margin:20px; grid-template-columns:1fr; gap:14px; }.gift-main .composer { margin:0 20px; }.command-help,#gift-error { margin-left:20px; margin-right:20px; }.gift-app select { font-size:16px; } }

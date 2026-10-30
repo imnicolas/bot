@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pepe · Laboratorio de cumpleaños</title>
+  <link rel="stylesheet" href="/styles.css"><link rel="stylesheet" href="/gifts.css">
+  <script src="/gifts.js" defer></script>
+</head>
+<body>
+<div class="gift-app">
+  <aside class="gift-sidebar">
+    <a class="back" href="/">← Sala de comandos</a>
+    <div class="gift-brand"><img src="/pepe.png" alt="Pepe"><div>Pepe<small>Argentina Developer</small></div></div>
+    <div class="eyebrow">LABORATORIO / CUMPLEAÑOS</div>
+    <h1>La sorpresa empieza<br>una semana antes.</h1>
+    <p class="muted">Elegí a alguien y recorré la organización de su regalo, desde el aviso hasta su regreso.</p>
+    <label class="field" for="birthday-person">¿De quién es el cumple?</label>
+    <select id="birthday-person"></select>
+    <button class="primary" id="start">🎂 Iniciar prueba</button>
+    <div class="rule-card"><strong>7 días antes</strong><p>Miembro: Pepe oculta el canal.<br>Admin: privado al otro admin.<br>Admin B: sólo privado al admin A.</p></div>
+    <p class="sandbox-note"><span class="status-dot"></span> Todo ocurre en una simulación local. Los permisos, mensajes y DMs de Discord no cambian.</p>
+  </aside>
+  <main class="gift-main">
+    <header class="gift-header"><div><span class="demo-badge">SANDBOX</span><strong>Organización de regalos</strong></div><span id="source" class="muted"></span></header>
+    <section class="scenario-head"><div><div class="eyebrow">ESCENARIO ACTUAL</div><h2 id="scenario-title">Prepará el primer regalo</h2><p id="scenario-description" class="muted">Empezá con un miembro; después probá los dos casos administrativos.</p></div><div class="date-card"><small>FECHA SIMULADA</small><strong id="simulated-date">—</strong><span id="birthday-date">Zona: America/Montevideo</span></div></section>
+    <ol id="steps" class="steps" aria-label="Progreso del regalo"></ol>
+    <div class="workspace">
+      <section class="conversation"><div class="pane-title"><span>🔒 #regalos</span><small>Vista del organizador</small></div><div id="channel-messages" class="gift-chat" aria-live="polite"></div>
+        <div id="participation" class="participation" hidden><label for="participant">Participar como</label><select id="participant"></select><div><button id="join" class="success">✅ Participo</button><button id="leave">Retirar participación</button></div><small>El check expresa intención de colaborar; no confirma un pago.</small></div>
+      </section>
+      <section class="conversation private-pane"><div class="pane-title"><span>✉ Privados de Pepe</span><small>Sólo al otro admin</small></div><div id="private-messages" class="gift-chat" aria-live="polite"></div></section>
+    </div>
+    <section class="operation-bar"><div><strong id="next-title">Listo para probar</strong><p id="next-description" class="muted">Cada inicio prepara un escenario nuevo; podés repetirlo cuantas veces quieras.</p></div><div class="operation-buttons"><button id="manual-hide" hidden>Simular exclusión manual</button><button id="manual-restore" hidden>Simular devolución de acceso</button><button id="restore" hidden>Reincorporar y cerrar</button><button id="restart" disabled>Reiniciar servicio</button><button id="tick" disabled>Revisar otra vez</button></div></section>
+    <div class="bottom-grid"><section class="audit"><div class="eyebrow">REGISTRO DEL FLUJO</div><ol id="audit"></ol></section><section class="attendees"><div class="eyebrow">COLABORADORES <span id="count">0</span></div><div id="attendees" class="muted">Todavía no hay una convocatoria.</div></section></div>
+    <form id="gift-command" class="composer"><label for="command" class="sr-only">Comando de prueba</label><input id="command" placeholder="!cumple @lucia" autocomplete="off" maxlength="100"><button type="submit">Ejecutar ↵</button></form>
+    <p class="command-help">Probá <code>!cumple @persona</code> con su username o ID. En esta web inicia la simulación; en Discord el comando temporal sólo devuelve una vista de prueba.</p>
+    <p id="gift-error" role="alert"></p>
+  </main>
+</div>
+</body>
+</html>

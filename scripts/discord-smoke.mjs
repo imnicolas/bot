@@ -79,6 +79,14 @@ export async function verifyDiscordLifecycle(levels) {
     assert.match(replies[0].content, /<@2>/);
     assert.equal(replies[0].embeds.length, 1);
 
+    clock += 60_000;
+    bot.client.emit('messageCreate', incoming('!regalo estado'));
+    await setImmediate();
+    assert.equal(replies.length, 2);
+    assert.match(replies[1].content, /regalos está desactivada/);
+    assert.deepEqual(replies[1].allowed_mentions.parse, []);
+    assert.equal(levels.profile('10', '2').xp, 30, 'Regalos apagado no suma XP.');
+
     // La primera respuesta falla mientras se cierra; el aviso aún necesita REST.
     console.error = (...args) => errors.push(args);
     failNext = true;
@@ -88,9 +96,9 @@ export async function verifyDiscordLifecycle(levels) {
     clock += 60_000;
     bot.client.emit('messageCreate', incoming('Este mensaje llegó durante el cierre'));
     await stopping;
-    assert.equal(attempts, 3);
-    assert.equal(replies.length, 2);
-    assert.match(replies[1].content, /Se me cruzaron los cables/);
+    assert.equal(attempts, 4);
+    assert.equal(replies.length, 3);
+    assert.match(replies[2].content, /Se me cruzaron los cables/);
     assert.equal(errors.length, 1, 'Sólo se registra el fallo simulado; el aviso sí se envía.');
     assert.equal(bot.client.token, null);
     assert.equal(levels.profile('10', '2').xp, 30, 'No procesa eventos nuevos durante el cierre.');

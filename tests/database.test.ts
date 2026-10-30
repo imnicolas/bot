@@ -27,6 +27,20 @@ test('migra una base v1 al esquema actual conservando la lotería', (t) => {
   assert.equal(updated.pragma('synchronous', { simple: true }), 2);
 });
 
+test('migra v7 con categoría gift por defecto sin perder cumpleaños ni contactos', (t) => {
+  const f = fixture(t);
+  const path = join(f.directory, 'v7.sqlite');
+  const old = new Database(path);
+  for (const migration of migrations.slice(0, 7)) old.exec(migration);
+  old.prepare('INSERT INTO gift_birthdays VALUES (?, ?, ?, ?)').run('1', '2', 'Persona ficticia', '02/01');
+  old.prepare('INSERT INTO gift_member_details VALUES (?,?,?,?,?,?,?,?,?)').run('1', '2', 'persona', 'Persona', 'Ficticia', '00123', 'Calle ficticia', 'Ciudad', '0010');
+  old.pragma('user_version = 7'); old.close();
+  const upgraded = f.connect(path);
+  assert.equal(upgraded.prepare('SELECT category FROM gift_birthdays').pluck().get(), 'gift');
+  assert.deepEqual(upgraded.prepare('SELECT phone,postal_code FROM gift_member_details').get(), { phone: '00123', postal_code: '0010' });
+  assert.throws(() => upgraded.prepare('UPDATE gift_birthdays SET category=?').run('invalid'), /CHECK/);
+});
+
 test('rechaza bases futuras y archivos corruptos sin reemplazarlos', (t) => {
   const f = fixture(t);
   const futurePath = join(f.directory, 'future.sqlite');
@@ -40,6 +54,21 @@ test('rechaza bases futuras y archivos corruptos sin reemplazarlos', (t) => {
   writeFileSync(corrupt, 'esto no es sqlite');
   assert.throws(() => openDatabase(corrupt));
   assert.equal(readFileSync(corrupt, 'utf8'), 'esto no es sqlite');
+});
+
+test('migra v5 preservando la exclusión original y marca la gestión previa como automática', (t) => {
+  const f = fixture(t);
+  const path = join(f.directory, 'v5.sqlite');
+  const old = new Database(path);
+  for (const migration of migrations.slice(0, 5)) old.exec(migration);
+  old.pragma('user_version = 5');
+  old.prepare(`INSERT INTO gift_cycles (guild_id, channel_id, user_id, name, birthday, prior_view, state)
+    VALUES ('1', '2', '3', 'Persona ficticia', '2026-11-12', 1, 'hidden')`).run();
+  old.close();
+  const updated = f.connect(path);
+  assert.deepEqual(updated.prepare('SELECT prior_view, state, exclusion_mode FROM gift_cycles').get(),
+    { prior_view: 1, state: 'hidden', exclusion_mode: 'bot' });
+  assert.equal(updated.pragma('user_version', { simple: true }), migrations.length);
 });
 
 test('backup online restaura XP, cooldown y tablas anteriores sin sobrescribir backups existentes', async (t) => {
