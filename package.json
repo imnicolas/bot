@@ -12,7 +12,11 @@
     "check": "npm run typecheck && npm test && npm run build && npm run smoke",
     "smoke": "node scripts/smoke.mjs",
     "preview": "npm run build && node dist/preview/server.js",
-    "db:backup": "node dist/cli/backup.js"
+    "preview:check": "npm run build && node scripts/gift-preview-smoke.mjs",
+    "db:backup": "node dist/cli/backup.js",
+    "gifts:import": "node dist/cli/import-birthdays.js",
+    "gifts:resolve": "node dist/cli/resolve-birthdays.js",
+    "gifts:import-roster": "node dist/cli/import-roster.js"
   },
   "keywords": [],
   "author": "",
@@ -20,9 +24,9 @@
   "type": "module",
   "dependencies": {
     "better-sqlite3": "^13.0.3",
+    "csv-parse": "^7.0.3",
     "discord.js": "^14.27.0",
     "dotenv": "^18.0.8",
-    "exceljs": "^4.4.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
@@ -30,11 +34,6 @@
     "@types/node": "^22.20.5",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3"
-  },
-  "overrides": {
-    "exceljs": {
-      "uuid": "^11.1.1"
-    }
   },
   "private": true,
   "engines": {

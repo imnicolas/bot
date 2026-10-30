@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
-import { loadBirthdayConfig } from './birthdays.js';
 import { loadFeatures } from './features.js';
+import { loadGiftConfig } from './gifts.js';
+import { loadGiftTestConfig } from './gift-test.js';
 
 export function databasePath(env: NodeJS.ProcessEnv): string {
   if (env['DATA_FILE']?.trim()) {
@@ -18,7 +19,8 @@ export function loadConfig(env: NodeJS.ProcessEnv) {
   return {
     token,
     features: loadFeatures(env),
+    gifts: loadGiftConfig(env),
+    giftTest: loadGiftTestConfig(env),
     databasePath: databasePath(env),
-    birthdays: loadBirthdayConfig(env),
   };
 }

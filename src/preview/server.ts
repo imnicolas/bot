@@ -6,8 +6,28 @@ import { loadFeatures } from '../config/features.js';
 import { probotMedia } from '../content/probot.js';
 import { reactionAssetFiles } from '../content/reactions.js';
 import { DemoSession } from './session.js';
+import { GiftDemoSession, giftDemoConfig, giftDemoMembers } from './gifts.js';
+import { parseGiftRoster } from '../features/gifts/roster.js';
+import { loadGiftConfig } from '../config/gifts.js';
 
 const session = new DemoSession(undefined, loadFeatures(process.env));
+const rosterPath = process.env['PREVIEW_GIFTS_ROSTER'];
+// Project private CSV data before it reaches the web UI: never expose contact fields.
+const giftMembers = rosterPath ? parseGiftRoster(await readFile(rosterPath, 'utf8')).map((m) => ({
+  ...m.birthday, username: m.details.username,
+})) : giftDemoMembers;
+const giftConfig = rosterPath ? loadGiftConfig({
+  ...process.env, FEATURE_GIFTS_ENABLED: 'true', GIFTS_GUILD_ID: giftDemoConfig.guildId,
+  GIFTS_CHANNEL_ID: giftDemoConfig.channelId,
+  GIFTS_ROLE_ID: giftDemoConfig.roleId,
+})! : giftDemoConfig;
+const gifts = new GiftDemoSession(giftMembers, giftConfig);
+let giftTail: Promise<unknown> = Promise.resolve();
+const giftWork = <T>(work: () => Promise<T>): Promise<T> => {
+  const result = giftTail.then(work);
+  giftTail = result.catch(() => undefined);
+  return result;
+};
 const port = z.coerce
   .number()
   .int()
@@ -40,10 +60,23 @@ const server = createServer(async (request, response) => {
     response.end(JSON.stringify(value));
   };
   try {
+    if (request.headers.host !== `127.0.0.1:${port}`) return json({ error: 'Host no permitido.' }, 403);
     // La demo sólo escucha loopback; las mutaciones también verifican el origen.
     if (request.method === 'POST' && request.headers.origin !== origin)
       return json({ error: 'Origen no permitido.' }, 403);
     if (request.method === 'GET' && request.url === '/api/state') return json(session.state());
+    if (request.method === 'GET' && request.url === '/api/gifts') return json({ ...gifts.state(), privateRoster: !!rosterPath });
+    if (request.method === 'POST' && request.url === '/api/gifts/start') {
+      const input = z.object({ userId: z.string().max(20) }).strict().parse(await body(request));
+      return json(await giftWork(() => gifts.start(input.userId)));
+    }
+    if (request.method === 'POST' && request.url === '/api/gifts/action') {
+      const input = z.object({
+        action: z.enum(['tick', 'join', 'leave', 'restore', 'manual-hide', 'manual-restore', 'restart']),
+        userId: z.string().max(20).optional(),
+      }).strict().parse(await body(request));
+      return json(await giftWork(() => gifts.action(input.action, input.userId)));
+    }
     if (request.method === 'POST' && request.url === '/api/message') {
       const input = z
         .object({
@@ -62,6 +95,9 @@ const server = createServer(async (request, response) => {
       '/': { file: 'index.html', type: 'text/html' },
       '/client.js': { file: 'client.js', type: 'text/javascript' },
       '/styles.css': { file: 'styles.css', type: 'text/css' },
+      '/cumples': { file: 'gifts.html', type: 'text/html' },
+      '/gifts.js': { file: 'gifts.js', type: 'text/javascript' },
+      '/gifts.css': { file: 'gifts.css', type: 'text/css' },
       '/pepe.png': { file: '../assets/pepe.png', type: 'image/png' },
     };
     for (const file of [...probotMedia.map((media) => media.file), ...reactionAssetFiles]) {
@@ -81,15 +117,16 @@ const server = createServer(async (request, response) => {
 
 server.on('error', (error) => {
   session.close();
+  gifts.close();
   console.error(error);
   process.exitCode = 1;
 });
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {
   process.once(signal, () => {
-    server.close(() => session.close());
+    server.close(() => { session.close(); gifts.close(); });
     server.closeIdleConnections();
   });
 }
 server.listen(port, '127.0.0.1', () =>
-  console.log(`Demo local: ${origin} · sin conexión a Discord ni datos reales.`),
+  console.log(`Demo local: ${origin} · Cumpleaños: ${origin}/cumples · sin conexión a Discord. Padrón: ${rosterPath ? 'privado, sólo identidades y cumpleaños' : 'ficticio'}.`),
 );
