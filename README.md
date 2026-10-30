@@ -145,3 +145,5 @@ El contexto de los comandos es independiente de Discord. El adaptador construye 
 `npm run check` ejecuta TypeScript estricto, tests, compilación limpia y smoke del compilado. El smoke comprueba cierre ordenado y backup/restauración de SQLite sin conectarse a Discord. GitHub Actions usa la misma verificación.
 
 TypeScript activa `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` y controles de código sin uso. Las pruebas cubren comandos públicos, menciones, cooldown persistente, concurrencia, separación de servidores, migraciones y recuperación. La prueba local no confirma permisos ni notificaciones reales en Discord; la guía del LXC incluye esa comprobación.
+
+[🎵 Nunca te voy a abandonar](https://youtu.be/dQw4w9WgXcQ?si=W0raWh56sCbnmV-h)
