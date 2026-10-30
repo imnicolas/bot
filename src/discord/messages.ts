@@ -7,6 +7,7 @@ import type { LevelRepository } from '../features/levels/store.js';
 import { levelProgress } from '../features/levels/store.js';
 import { randomIndex } from '../shared/random.js';
 import type { RandomIndex } from '../shared/random.js';
+import type { BirthdayReader } from '../commands/birthdays.js';
 
 export interface IncomingMessage {
   readonly author: Pick<Message['author'], 'id' | 'bot'>;
@@ -46,6 +47,7 @@ export function toDiscordReply(reply: CommandReply, userId: string): MessageRepl
 export interface MessageServices {
   readonly features?: Features;
   readonly levels: LevelRepository;
+  readonly birthdays?: BirthdayReader;
   readonly now?: () => Date;
   readonly random?: RandomIndex;
 }
@@ -64,6 +66,7 @@ export async function handleMessage(
       guildId: message.guildId,
       random,
       levels: services.levels,
+      ...(services.birthdays ? { birthdays: services.birthdays } : {}),
       ...(message.actor ? { actor: message.actor } : {}),
       ...(message.members ? { members: message.members } : {}),
     });

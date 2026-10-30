@@ -2,6 +2,8 @@
 
 Pepe lee cumpleaños de SQLite y **7 días antes retira el rol Cumpleañeri**. Confirma que el cumpleañero no vea ninguno de los canales protegidos y entonces publica `@here 🎁 ¡Organizamos el regalo!` en el canal de organización, con botones de participación. La reincorporación es manual. No lee Excel ni Google Sheets durante la ejecución.
 
+`!cumples` conserva la consulta pública del calendario: `persona — DD/MM`, ordenado por mes, día y nombre, sin menciones ni contactos. Lee sólo los cumpleaños del servidor donde se solicita, incluye todo el padrón y funciona también con `FEATURE_GIFTS_ENABLED=false`. Para listas extensas, `!cumples 2` muestra la segunda página. No inicia regalos ni cambia roles.
+
 ## Configuración
 
 ```dotenv

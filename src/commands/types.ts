@@ -1,6 +1,7 @@
 import type { Features } from '../config/features.js';
 import type { LevelRepository } from '../features/levels/store.js';
 import type { RandomIndex } from '../shared/random.js';
+import type { BirthdayReader } from './birthdays.js';
 
 export interface MemberProfile {
   readonly id: string;
@@ -14,6 +15,7 @@ export interface CommandContext {
   readonly guildId: string;
   readonly random: RandomIndex;
   readonly levels: LevelRepository;
+  readonly birthdays?: BirthdayReader;
   readonly actor?: MemberProfile;
   readonly members?: readonly MemberProfile[];
 }

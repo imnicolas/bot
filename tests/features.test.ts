@@ -26,7 +26,7 @@ test('cada feature filtra ejecución, aliases y ayuda; comandos apagados nunca d
   const { levels } = fixture(t);
   const features = { social: false, meals: false, levels: true };
   const context = { levels, features, guildId: '1', userId: '2', random: () => 0 };
-  assert.deepEqual(commandCatalog(features).map((c) => c.name), ['nivel', 'ranking', 'ayuda']);
+  assert.deepEqual(commandCatalog(features).map((c) => c.name), ['nivel', 'ranking', 'cumples', 'ayuda']);
   assert.doesNotMatch(executeCommand('ayuda', context)?.content ?? '', /desayuno|mate|GIFs/);
   for (const content of ['mate?', '!café', 'buen día', 'ban?', 'aluerzo?', 'lamuerzo?', 'grupo comando?']) {
     assert.equal(executeCommand(content, context), undefined);
@@ -37,5 +37,5 @@ test('cada feature filtra ejecución, aliases y ayuda; comandos apagados nunca d
   assert.ok(executeCommand('nivel', context));
   assert.ok(commandCatalog({ social: true, meals: false, levels: false }).some((c) => c.name === 'mate'));
   assert.ok(commandCatalog({ social: false, meals: true, levels: false }).some((c) => c.name === 'desayuno'));
-  assert.deepEqual(commandCatalog({ social: false, meals: false, levels: false }).map((c) => c.name), ['ayuda']);
+  assert.deepEqual(commandCatalog({ social: false, meals: false, levels: false }).map((c) => c.name), ['cumples', 'ayuda']);
 });

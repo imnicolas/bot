@@ -6,7 +6,8 @@ import { createBot } from '../dist/discord/client.js';
 // Objetos reales del SDK; sólo el transporte HTTP se sustituye. Nunca hace login.
 export async function verifyDiscordLifecycle(levels) {
   let clock = 1000;
-  const bot = createBot({ levels, features: { social: true, meals: true, levels: true }, now: () => new Date(clock), random: () => 0 });
+  const birthdays = { birthdays: guildId => guildId === '10' ? [{ name: 'Persona ficticia', dayMonth: '03/02' }] : [] };
+  const bot = createBot({ levels, birthdays, features: { social: true, meals: true, levels: true }, now: () => new Date(clock), random: () => 0 });
   const fakeToken = 'fake-token-for-offline-smoke';
   bot.client.token = fakeToken;
   bot.client.rest.setToken(fakeToken);
@@ -87,6 +88,13 @@ export async function verifyDiscordLifecycle(levels) {
     assert.deepEqual(replies[1].allowed_mentions.parse, []);
     assert.equal(levels.profile('10', '2').xp, 30, 'Regalos apagado no suma XP.');
 
+    bot.client.emit('messageCreate', incoming('!cumples'));
+    await setImmediate();
+    assert.equal(replies.length, 3);
+    assert.equal(replies[2].embeds[0].description, 'Persona ficticia — 03/02');
+    assert.deepEqual(replies[2].allowed_mentions.parse, []);
+    assert.equal(levels.profile('10', '2').xp, 30, 'El calendario funciona sin regalos y no suma XP.');
+
     // La primera respuesta falla mientras se cierra; el aviso aún necesita REST.
     console.error = (...args) => errors.push(args);
     failNext = true;
@@ -96,9 +104,9 @@ export async function verifyDiscordLifecycle(levels) {
     clock += 60_000;
     bot.client.emit('messageCreate', incoming('Este mensaje llegó durante el cierre'));
     await stopping;
-    assert.equal(attempts, 4);
-    assert.equal(replies.length, 3);
-    assert.match(replies[2].content, /Se me cruzaron los cables/);
+    assert.equal(attempts, 5);
+    assert.equal(replies.length, 4);
+    assert.match(replies[3].content, /Se me cruzaron los cables/);
     assert.equal(errors.length, 1, 'Sólo se registra el fallo simulado; el aviso sí se envía.');
     assert.equal(bot.client.token, null);
     assert.equal(levels.profile('10', '2').xp, 30, 'No procesa eventos nuevos durante el cierre.');

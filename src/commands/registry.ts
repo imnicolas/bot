@@ -2,10 +2,11 @@ import { defaultFeatures } from '../config/features.js';
 import type { Features } from '../config/features.js';
 import { levelCommands } from './levels.js';
 import { socialCommands } from './social.js';
+import { birthdayCommand } from './birthdays.js';
 import type { Command, CommandContext, CommandReply } from './types.js';
 
-const commands: readonly Command[] = [...socialCommands, ...levelCommands];
-const categories = { social: 'GIFs del grupo', progress: 'Participación', info: 'Ayuda' } as const;
+const commands: readonly Command[] = [...socialCommands, ...levelCommands, birthdayCommand];
+const categories = { social: 'GIFs del grupo', progress: 'Participación', info: 'Información' } as const;
 const help: Command = {
   access: 'public',
   category: 'info',

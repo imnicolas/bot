@@ -15,7 +15,7 @@ test('los comandos son públicos para cualquier miembro sin roles especiales', (
   const catalog = commandCatalog(features);
   assert.deepEqual(
     catalog.map((c) => c.name),
-    ['mate', 'vino', 'té', 'café', 'ban', 'medialunas', 'buen dia', 'pala', 'grupo comando', 'desayuno', 'almuerzo', 'cena', 'nivel', 'ranking', 'ayuda'],
+    ['mate', 'vino', 'té', 'café', 'ban', 'medialunas', 'buen dia', 'pala', 'grupo comando', 'desayuno', 'almuerzo', 'cena', 'nivel', 'ranking', 'cumples', 'ayuda'],
   );
   assert.ok(catalog.every((command) => command.access === 'public'));
   for (const userId of ['101', '102']) {

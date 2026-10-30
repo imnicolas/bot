@@ -19,5 +19,5 @@ test('demo usa el handler real: cambio de usuario, aviso de nivel, cooldown y ra
   assert.match(String(ranking.replies[0]?.content), /1\. <@102>/);
   const level = await demo.send('102', 'nivel <@101>');
   assert.equal(level.replies[0]?.embeds?.length, 1);
-  assert.equal(level.state.commands.length, 15);
+  assert.equal(level.state.commands.length, 16);
 });
