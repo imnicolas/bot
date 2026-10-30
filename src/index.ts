@@ -9,9 +9,10 @@ async function main(): Promise<void> {
   const config = loadConfig(process.env);
   console.log('Features activas:', config.features);
   const db = openDatabase(config.databasePath);
-  const bot = createBot({ levels: new LevelStore(db), features: config.features },
-    config.gifts ? { config: config.gifts, store: new GiftStore(db) } : undefined,
-    config.giftTest ? { config: config.giftTest, store: new GiftStore(db) } : undefined);
+  const birthdays = new GiftStore(db);
+  const bot = createBot({ levels: new LevelStore(db), features: config.features, birthdays },
+    config.gifts ? { config: config.gifts, store: birthdays } : undefined,
+    config.giftTest ? { config: config.giftTest, store: birthdays } : undefined);
   console.log('Regalos:', config.gifts ? 'habilitado' : 'desactivado');
   let shutdown: Promise<void> | undefined;
   const stop = (): Promise<void> => {

@@ -6,6 +6,7 @@ import type { MemberProfile } from '../commands/types.js';
 import { openDatabase } from '../database/connection.js';
 import { handleMessage } from '../discord/messages.js';
 import { LevelStore, levelProgress } from '../features/levels/store.js';
+import { GiftStore } from '../features/gifts/store.js';
 import type { RandomIndex } from '../shared/random.js';
 
 export const demoMembers: readonly MemberProfile[] = [
@@ -72,6 +73,7 @@ export class DemoSession {
       },
       {
         levels: this.levels,
+        birthdays: new GiftStore(this.db),
         features: this.features,
         now: () => new Date(this.clock),
         ...(this.random ? { random: this.random } : {}),

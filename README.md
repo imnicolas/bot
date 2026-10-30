@@ -12,7 +12,7 @@ El padrón admite `categoria=gift` o `no-gift`. Pepe conserva los datos de `no-g
 
 ## Comandos
 
-Hay **13 comandos habilitados por defecto** y dos de participación opcionales. Todos son públicos, sin roles especiales. Aceptan texto natural o prefijo `!`, con o sin `?` y tildes: `café?`, `cafe` y `!cafe` ejecutan el mismo comando.
+Hay **14 comandos habilitados por defecto** y dos de participación opcionales. Todos son públicos, sin roles especiales. Aceptan texto natural o prefijo `!`, con o sin `?` y tildes: `café?`, `cafe` y `!cafe` ejecutan el mismo comando.
 
 En las respuestas, `@usuario` representa a quien escribió el comando. Las probabilidades indicadas aplican con la feature correspondiente habilitada.
 
@@ -32,6 +32,9 @@ Estas respuestas son fijas: no tienen sorteo de premio o fracaso.
 | `pala?` | Mención al autor + [GIF de Homero asustado por la pala](assets/probot/pala.gif). | 100 % |
 | `grupo comando?` | `¡Grupo comando presente, @usuario! ¿Cuál es la misión?` + [GIF original del grupo comando](assets/probot/ahj0Fx.gif). | 100 % |
 | `ayuda` · aliases `comandos`, `help` | Lista de comandos habilitados y sus descripciones. | 100 % |
+| `!cumples [página]` | Lista `persona — DD/MM` de SQLite, ordenada de enero a diciembre y por día; desempata por nombre. Sin menciones ni datos de contacto. | 100 %; sin sorteo |
+
+`!cumples` puede usarlo cualquier miembro del servidor, aunque regalos automáticos o ranking estén apagados. Incluye todos los cumpleaños importados de ese servidor. Si la lista ocupa varias páginas, continuá con `!cumples 2`; si está vacía, Pepe lo indica.
 
 ### Comidas: premio o fracaso
 
