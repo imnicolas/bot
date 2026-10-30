@@ -27,4 +27,12 @@ export const migrations: readonly string[] = [
     last_given_at INTEGER NOT NULL CHECK (last_given_at >= 0),
     PRIMARY KEY (guild_id, giver_id)
   ) STRICT;`,
+  `CREATE TABLE birthday_role_states (
+    guild_id TEXT NOT NULL CHECK (length(guild_id) > 0 AND guild_id NOT GLOB '*[^0-9]*'),
+    user_id TEXT NOT NULL CHECK (length(user_id) > 0 AND user_id NOT GLOB '*[^0-9]*'),
+    role_id TEXT NOT NULL CHECK (length(role_id) > 0 AND role_id NOT GLOB '*[^0-9]*'),
+    remove_after TEXT NOT NULL CHECK (remove_after GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    role_preexisted INTEGER NOT NULL CHECK (role_preexisted IN (0, 1)),
+    PRIMARY KEY (guild_id, user_id, role_id)
+  ) STRICT;`,
 ];

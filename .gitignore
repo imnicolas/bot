@@ -8,3 +8,10 @@ data/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+
+# Padrones privados fuera de Git; sólo ejemplos CSV ficticios.
+*.xlsx
+*.xls
+*.ods
+*.csv
+!examples/*.csv

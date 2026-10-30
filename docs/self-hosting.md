@@ -38,8 +38,8 @@ Dentro del LXC, como root:
    install -o root -g root -m 0600 deploy/discord-bot.env.example /etc/discord-bot.env
    ```
 
-5. Editá `/etc/discord-bot.env` y completá el token. Conservá `DATABASE_PATH=/var/lib/discord-bot/bot.sqlite`. Dejá `FEATURE_SOCIAL_ENABLED=true`, `FEATURE_MEALS_ENABLED=true` y `FEATURE_LEVELS_ENABLED=false` para servir las reacciones y comidas con rank/XP apagados. No copies el token al unit de systemd ni al repositorio. El archivo lo lee systemd antes de cambiar al usuario `discordbot`.
-6. Activá **Message Content Intent**, invitá el bot y concedé los permisos del README. Después:
+5. Editá `/etc/discord-bot.env` y completá el token. Conservá `DATABASE_PATH=/var/lib/discord-bot/bot.sqlite`. Dejá `FEATURE_SOCIAL_ENABLED=true`, `FEATURE_MEALS_ENABLED=true` y `FEATURE_LEVELS_ENABLED=false` para servir las reacciones y comidas con rank/XP apagados. Para cumpleaños, completá `BIRTHDAY_GUILD_ID` y confirmá que exista un único rol llamado `Cumpleañeri`; configurá `BIRTHDAY_ROLE_NAME` solo si usás otro nombre. Confirmá que `BIRTHDAY_WORKBOOK` apunte al Excel desplegado en `/var/lib/discord-bot/birthdays.xlsx`. No copies el token al unit de systemd ni al repositorio. El archivo lo lee systemd antes de cambiar al usuario `discordbot`.
+6. Activá **Message Content Intent** y, si usás cumpleaños, **Server Members Intent**. Invitá el bot y concedé los permisos del README, incluyendo **Manage Roles** para cumpleaños; el rol de cumpleaños debe estar por debajo del rol más alto del bot. Después:
 
    ```sh
    install -o root -g root -m 0644 deploy/discord-bot.service /etc/systemd/system/discord-bot.service
@@ -121,3 +121,5 @@ Si la configuración todavía tiene `DATA_FILE`, reemplazalo por `DATABASE_PATH`
 - Reiniciá el servicio y verificá que se conservan XP y cooldown. El ranking no incluye mensajes anteriores a la activación del bot.
 
 Fuentes: [SQLite WAL](https://www.sqlite.org/wal.html), [API de better-sqlite3](https://github.com/WiseLibs/better-sqlite3/blob/master/docs/api.md), [systemd.exec](https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html).
+
+El Excel de cumpleaños no se distribuye con el código. Copialo desde una ruta privada a `/var/lib/discord-bot/birthdays.xlsx`, con propietario `discordbot:discordbot` y permisos `0600`. No adjuntes el padrón a issues, PRs ni artefactos de CI.

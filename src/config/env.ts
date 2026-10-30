@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import { loadBirthdayConfig } from './birthdays.js';
 import { loadFeatures } from './features.js';
 
 export function databasePath(env: NodeJS.ProcessEnv): string {
@@ -18,5 +19,6 @@ export function loadConfig(env: NodeJS.ProcessEnv) {
     token,
     features: loadFeatures(env),
     databasePath: databasePath(env),
+    birthdays: loadBirthdayConfig(env),
   };
 }

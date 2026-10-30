@@ -35,6 +35,12 @@ Configurá estas variables en `.env` o `/etc/discord-bot.env` y reiniciá el ser
 | `FEATURE_MEALS_ENABLED` | `true` | Desayuno, almuerzo y cena con probabilidad 1/3. |
 | `FEATURE_LEVELS_ENABLED` | `false` | XP, avisos de nivel, `nivel`/`rank` y `ranking`/`top`/`niveles`. |
 
+Cumpleaños es opcional: configurá `BIRTHDAY_GUILD_ID` para activarlo. El bot busca el rol `Cumpleañeri` (o `BIRTHDAY_ROLE_NAME`) y la tabla `Nombre`, `ID Discord`, `Dia de cumpleañitos` en cualquier hoja de `BIRTHDAY_WORKBOOK` (por defecto `/var/lib/discord-bot/birthdays.xlsx`). Asigna el rol desde siete días antes y lo quita el día del cumpleaños, únicamente si el bot lo agregó. La zona horaria predeterminada es `America/Argentina/Buenos_Aires`; 29/02 se celebra el 1/03 en años no bisiestos. Los IDs deben estar guardados como texto y ser únicos.
+
+El comando `cumple` (también `!cumple`) fuerza una sincronización manual en el servidor configurado. Solo pueden ejecutarlo miembros con **Manage Roles**. Aplica la misma ventana de fechas que la sincronización automática y responde con el número de roles asignados, retirados y errores.
+
+Para producción, el bot necesita **Manage Roles** y el rol configurado debe estar por debajo del rol más alto del bot. Al activar cumpleaños, también habilitá el intent privilegiado **Server Members Intent** en el Developer Portal. La hoja de cumpleaños solo se lee; no se modifica.
+
 Sólo se acepta `true` o `false`; una configuración inválida impide arrancar. Apagar una feature oculta sus comandos en ayuda y demo, e ignora sus aliases. Los comandos apagados tampoco suman XP. Apagar niveles pausa la participación sin borrar SQLite; se puede reactivar conservando XP y cooldowns.
 
 La fuente del catálogo es [comandos de ProBot](docs/probot-commands.txt). Las imágenes recuperadas se guardan en `assets/probot` y Discord las muestra desde el repositorio público, sin abrir puertos del LXC. `mate` y `pala` usan los reemplazos indicados en `src/content/probot.ts`; `aika` se excluyó a pedido del servidor porque su imagen original no está disponible. JPG y PNG se conservan como imágenes, sin convertirlos en GIFs. Desayuno y almuerzo conservan los GIFs originales para ganar/perder; cena conserva la foto de asado y usa a Sasha para el fracaso. Grupo comando usa su GIF original. Las fuentes y hashes están en [este catálogo](docs/probot-reaction-sources.json). Cada comida mantiene su sorteo independiente y un chiste según el resultado.
@@ -87,3 +93,5 @@ El contexto de los comandos es independiente de Discord. El adaptador construye 
 `npm run check` ejecuta TypeScript estricto, tests, compilación limpia y smoke del compilado. El smoke comprueba cierre ordenado y backup/restauración de SQLite sin conectarse a Discord. GitHub Actions usa la misma verificación.
 
 TypeScript activa `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` y controles de código sin uso. Las pruebas cubren comandos públicos, menciones, cooldown persistente, concurrencia, separación de servidores, migraciones y recuperación. La prueba local no confirma permisos ni notificaciones reales en Discord; la guía del LXC incluye esa comprobación.
+
+El padrón real es privado: guardalo fuera del repositorio, por ejemplo en `/var/lib/discord-bot/birthdays.xlsx`, accesible sólo al usuario del servicio (`0600`). No subas Excel, CSV reales ni enlaces a la planilla a GitHub.
