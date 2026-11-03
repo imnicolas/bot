@@ -67,4 +67,10 @@ export const migrations: readonly string[] = [
   `ALTER TABLE gift_birthdays ADD COLUMN category TEXT NOT NULL DEFAULT 'gift'
     CHECK (category IN ('gift', 'no-gift'));`,
   `ALTER TABLE gift_cycles ADD COLUMN access_role_id TEXT;`,
+  `CREATE TABLE birthday_greetings (
+    id INTEGER PRIMARY KEY, guild_id TEXT NOT NULL, channel_id TEXT NOT NULL,
+    user_id TEXT NOT NULL, birthday TEXT NOT NULL,
+    state TEXT NOT NULL CHECK (state IN ('pending', 'sending', 'sent')), message_id TEXT,
+    UNIQUE (guild_id, channel_id, user_id, birthday)
+  ) STRICT;`,
 ];

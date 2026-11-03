@@ -5,11 +5,12 @@ import {
 import type { Client, TextChannel } from 'discord.js';
 import type { GiftConfig } from '../config/gifts.js';
 import type { GiftChannel } from '../features/gifts/service.js';
-import type { AdminNotice, GiftCycle, ViewState } from '../features/gifts/store.js';
+import type { AdminNotice, BirthdayGreeting, GiftCycle, ViewState } from '../features/gifts/store.js';
 import { PrivateMessageRejected } from '../features/gifts/admin-notices.js';
 
 const marker = (cycle: GiftCycle) => `Pepe · regalo ${cycle.id}`;
 const privateMarker = (notice: AdminNotice) => `Pepe · aviso privado ${notice.id}`;
+const birthdayMarker = (greeting: BirthdayGreeting) => `Pepe · cumpleaños ${greeting.id}`;
 
 export class DiscordGiftChannel implements GiftChannel {
   constructor(private readonly client: Client, private readonly config: GiftConfig) {}
@@ -129,6 +130,32 @@ export class DiscordGiftChannel implements GiftChannel {
     const channel = await this.channel();
     const member = await channel.guild.members.fetch({ user: userId, force: true });
     return !member.user.bot && channel.permissionsFor(member).has(PermissionFlagsBits.ViewChannel);
+  }
+
+  async canGreetBirthday(userId: string): Promise<boolean> {
+    const channel = await this.channel();
+    await channel.guild.roles.fetch();
+    const me = await channel.guild.members.fetchMe({ force: true });
+    if (!channel.permissionsFor(me).has([PermissionFlagsBits.ViewChannel, PermissionFlagsBits.ReadMessageHistory,
+      PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.MentionEveryone])) {
+      throw new Error('El saludo requiere ver, leer y enviar mensajes, enlaces y @here en cumpleañitos.');
+    }
+    return this.canParticipate(userId);
+  }
+
+  async greetBirthday(greeting: BirthdayGreeting): Promise<string> {
+    const message = await (await this.channel()).send({
+      content: `@here 🎂 ¡Feliz cumple, <@${greeting.userId}>! 🎉`,
+      embeds: [new EmbedBuilder().setDescription('¡Que tengas un gran día! 🇦🇷').setFooter({ text: birthdayMarker(greeting) })],
+      allowedMentions: { parse: ['everyone'], users: [greeting.userId], roles: [] },
+      nonce: `birthday-${greeting.id}`, enforceNonce: true,
+    });
+    return message.id;
+  }
+
+  async findBirthdayGreeting(greeting: BirthdayGreeting): Promise<string | undefined> {
+    return (await (await this.channel()).messages.fetch({ limit: 100 })).find(m =>
+      m.author.id === this.client.user?.id && m.embeds.some(e => e.footer?.text === birthdayMarker(greeting)))?.id;
   }
 
   private async adminDM(notice: AdminNotice) {

@@ -63,15 +63,21 @@ export class GiftRuntime {
         const [, action, target, ...extra] = message.content.trim().split(/\s+/);
         if (action?.toLowerCase() === 'estado' && !target) {
           const cycles = this.service.store.cycles(this.service.config).filter((c) => c.state !== 'restored');
-          await reply(cycles.length ? cycles.slice(0, 20).map((c) => `Regalo ${c.id}: <@${c.userId}> · ${c.birthday} · ${c.state} · ${this.service.store.participants(c.id).length} participantes`).join('\n') : 'No hay regalos pendientes.');
+          const lines = cycles.slice(0, 10).map((c) => `Regalo ${c.id}: <@${c.userId}> · ${c.birthday} · ${c.state} · ${this.service.store.participants(c.id).length} participantes`);
+          lines.push(...this.service.store.pendingGreetings(this.service.config).slice(0, 10).map(g => `Saludo ${g.id}: <@${g.userId}> · ${g.birthday} · ${g.state}`));
+          await reply(lines.length ? lines.slice(0, 15).join('\n') : 'No hay regalos ni saludos pendientes.');
           return;
         }
         const userId = /^<@!?(\d+)>$/.exec(target ?? '')?.[1] ?? target ?? '';
         if (extra.length || !isSnowflake(userId)) {
-          await reply('Usá !regalo estado, !regalo reincorporar @usuario, !regalo participantes @usuario o !regalo anunciar @usuario.');
+          await reply('Usá !regalo estado, !regalo reincorporar @usuario, !regalo participantes @usuario, !regalo anunciar @usuario o !regalo felicitar @usuario.');
           return;
         }
         switch (action?.toLowerCase()) {
+          case 'felicitar':
+            await this.service.retryBirthday(userId);
+            await reply('Saludo del cumpleaños de hoy registrado.');
+            break;
           case 'reincorporar': {
             const manual = this.service.active(userId)?.exclusionMode === 'manual';
             const visible = await this.service.restore(userId);
@@ -99,7 +105,7 @@ export class GiftRuntime {
             break;
           }
           default:
-            await reply('Acción desconocida. Usá !regalo estado, reincorporar, participantes o anunciar.');
+            await reply('Acción desconocida. Usá !regalo estado, reincorporar, participantes, anunciar o felicitar.');
         }
       });
     } catch (error) {

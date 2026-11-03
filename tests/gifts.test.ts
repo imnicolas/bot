@@ -6,7 +6,7 @@ import { dueBirthday, localDay, parseBirthdays } from '../src/features/gifts/bir
 import { GiftService } from '../src/features/gifts/service.js';
 import type { GiftChannel } from '../src/features/gifts/service.js';
 import { GiftStore } from '../src/features/gifts/store.js';
-import type { GiftCycle, ViewState } from '../src/features/gifts/store.js';
+import type { BirthdayGreeting, GiftCycle, ViewState } from '../src/features/gifts/store.js';
 import type { AdminNotice } from '../src/features/gifts/store.js';
 import { PrivateMessageRejected } from '../src/features/gifts/admin-notices.js';
 import { fixture } from './helpers.js';
@@ -24,6 +24,8 @@ class Channel implements GiftChannel {
   admins = new Set<string>();
   withoutChannelRole = new Set<string>();
   messages = new Map<number, string>();
+  greetings = new Map<number, string>();
+  failGreet: 'before' | 'after' | undefined;
   privateMessages = new Map<number, string>();
   privateAttempts = 0;
   failPrivate: 'blocked' | 'before' | 'after' | undefined;
@@ -62,6 +64,16 @@ class Channel implements GiftChannel {
   }
   async findAnnouncement(cycle: GiftCycle) { return this.messages.get(cycle.id); }
   async canParticipate(id: string) { return (await this.inspect(id)).visible; }
+  async canGreetBirthday(id: string) { return this.canParticipate(id); }
+  async greetBirthday(g: BirthdayGreeting) {
+    const fail = this.failGreet; this.failGreet = undefined;
+    if (fail === 'before') throw new Error('Falló saludo');
+    this.operations.push(`greet:${g.userId}`);
+    this.greetings.set(g.id, `30000000000000000${g.id}`);
+    if (fail === 'after') throw new Error('Respuesta perdida del saludo');
+    return this.greetings.get(g.id)!;
+  }
+  async findBirthdayGreeting(g: BirthdayGreeting) { return this.greetings.get(g.id); }
   async sendAdminNotice(notice: AdminNotice) {
     this.privateAttempts++;
     if (notice.userId === notice.recipientId || !this.admins.has(notice.recipientId)) throw new PrivateMessageRejected('No es el otro admin');
@@ -337,13 +349,113 @@ test('excluye todos los cumpleaños superpuestos antes de convocar; reinicio sin
   await assert.rejects(restarted.restore(user), /no tiene una exclusión/);
 });
 
-test('el cumpleaños no reincorpora automáticamente y una exclusión pendiente bloquea el siguiente año', async (t) => {
+test('una exclusión vencida se reincorpora sin saludo atrasado y permite organizar el siguiente año', async (t) => {
   const f = setup(t);
   await f.service.tick(new Date('2026-11-10T12:00:00Z'));
   await f.service.tick(new Date('2026-11-13T12:00:00Z'));
+  assert.equal(f.channel.views.get(user), 1);
+  assert.equal(f.channel.greetings.size, 0);
   await f.service.tick(new Date('2027-11-07T12:00:00Z'));
   assert.equal(f.channel.views.get(user), -1);
-  assert.equal(f.store.cycles(config).length, 1);
+  assert.equal(f.store.cycles(config).length, 2);
+});
+
+test('día local: devuelve rol antes de saludar y guarda un único saludo tras reiniciar', async (t) => {
+  const f = setup(t);
+  await f.service.tick(now);
+  await f.service.tick(new Date('2026-11-12T02:59:59Z'));
+  assert.equal(f.channel.views.get(user), -1);
+  await f.service.tick(new Date('2026-11-12T03:00:00Z'));
+  assert.equal(f.channel.views.get(user), 1);
+  assert.deepEqual(f.channel.operations.slice(-2), [`restore:${user}`, `greet:${user}`]);
+  await new GiftService(config, new GiftStore(f.connect()), f.channel).tick(new Date('2026-11-12T23:00:00Z'));
+  assert.equal(f.channel.greetings.size, 1);
+  assert.equal(f.service.active(user), undefined);
+});
+
+test('primer arranque el día del cumple: saluda sin quitar el rol ni organizar un regalo tardío', async (t) => {
+  const f = setup(t);
+  await f.service.tick(new Date('2026-11-12T12:00:00Z'));
+  assert.deepEqual(f.channel.operations, [`greet:${user}`]);
+  assert.equal(f.store.cycles(config).length, 0);
+});
+
+test('respuesta perdida al devolver rol: completa la reincorporación antes de saludar tras reinicio', async (t) => {
+  const f = setup(t);
+  await f.service.tick(now);
+  f.channel.failRestore = true;
+  await assert.rejects(f.service.tick(new Date('2026-11-12T03:00:00Z')));
+  assert.equal(f.channel.greetings.size, 0);
+  await new GiftService(config, new GiftStore(f.connect()), f.channel).tick(new Date('2026-11-12T03:01:00Z'));
+  assert.equal(f.service.active(user), undefined);
+  assert.equal(f.channel.greetings.size, 1);
+});
+
+test('falta @here: devuelve el rol y deja el saludo pending hasta recuperar el permiso', async (t) => {
+  const f = setup(t);
+  await f.service.tick(now);
+  let allowed = false;
+  t.mock.method(f.channel, 'canGreetBirthday', async () => { if (!allowed) throw new Error('Falta @here'); return true; });
+  await assert.rejects(f.service.tick(new Date('2026-11-12T03:00:00Z')), /@here/);
+  assert.equal(f.service.active(user), undefined);
+  assert.equal(f.store.pendingGreetings(config)[0]?.state, 'pending');
+  allowed = true;
+  await f.service.tick(new Date('2026-11-12T03:01:00Z'));
+  assert.equal(f.channel.greetings.size, 1);
+  assert.deepEqual(f.store.pendingGreetings(config), []);
+});
+
+test('admin sólo-DM: al recuperar el bot el día del cumpleaños mantiene el aviso cruzado sin saludo público', async (t) => {
+  const f = adminSetup(t);
+  const dmOnly = { ...f.adminConfig, dmOnlyAdminId: user };
+  await new GiftService(dmOnly, f.store, f.channel).tick(new Date('2026-11-12T12:00:00Z'));
+  assert.deepEqual(f.channel.operations, [`dm:${user}:${other}`]);
+  assert.equal(f.channel.greetings.size, 0);
+});
+
+test('jerarquía bloqueada: recupera ciclo prepared al corregir permisos sin volver a excluir al vencido', async (t) => {
+  const f = setup(t);
+  f.store.prepare(config, { userId: user, name: 'Persona A', dayMonth: '12/11' }, '2026-11-12', 1);
+  f.channel.views.set(user, -1);
+  const original = f.channel.validate.bind(f.channel);
+  f.channel.validate = async () => { throw new Error('Jerarquía de roles'); };
+  await assert.rejects(f.service.tick(new Date('2026-11-12T12:00:00Z')));
+  assert.equal(f.channel.greetings.size, 0);
+  f.channel.validate = original;
+  await f.service.tick(new Date('2026-11-12T12:01:00Z'));
+  assert.deepEqual(f.channel.operations, [`restore:${user}`, `greet:${user}`]);
+});
+
+test('saludo ambiguo: reconcilia sin duplicar y exige reintento consciente si no aparece', async (t) => {
+  const f = setup(t);
+  const day = new Date('2026-11-12T12:00:00Z');
+  f.channel.failGreet = 'after';
+  await assert.rejects(f.service.tick(day), /perdida/);
+  await new GiftService(config, new GiftStore(f.connect()), f.channel).tick(day);
+  assert.equal(f.channel.greetings.size, 1);
+  f.store.import(guildId, [{ userId: other, name: 'Persona B', dayMonth: '12/11' }]);
+  f.channel.failGreet = 'before';
+  await assert.rejects(f.service.tick(day), /Falló saludo/);
+  await assert.rejects(f.service.tick(day), /incierto/);
+  assert.equal(f.channel.greetings.size, 1);
+  await f.service.retryBirthday(other, day);
+  await f.service.retryBirthday(other, day);
+  assert.equal(f.channel.greetings.size, 2);
+  await assert.rejects(f.service.retryBirthday(other, new Date('2026-11-13T12:00:00Z')), /hoy/);
+});
+
+test('un rol bloqueado no impide saludar otros cumpleaños y un miembro oculto espera reincorporación', async (t) => {
+  const f = setup(t);
+  f.store.import(guildId, [{ userId: other, name: 'Persona B', dayMonth: '12/11' }]);
+  f.store.prepare(config, { userId: user, name: 'Persona A', dayMonth: '12/11' }, '2026-11-12', 1);
+  f.channel.views.set(user, -1);
+  t.mock.method(f.channel, 'restore', async () => { throw new Error('Rol bloqueado'); });
+  await assert.rejects(f.service.tick(new Date('2026-11-12T12:00:00Z')));
+  assert.deepEqual(f.channel.operations, [`greet:${other}`]);
+  f.channel.views.set(participant, -1);
+  f.store.import(guildId, [{ userId: participant, name: 'Persona C', dayMonth: '12/11' }]);
+  await assert.rejects(f.service.tick(new Date('2026-11-12T12:01:00Z')));
+  assert.equal(f.channel.greetings.size, 1);
 });
 
 test('un canal público, miembro ausente o administrador bloquea toda convocatoria', async (t) => {

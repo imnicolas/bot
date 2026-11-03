@@ -4,7 +4,7 @@ import type { Birthday } from '../features/gifts/birthdays.js';
 import { GiftService } from '../features/gifts/service.js';
 import type { GiftChannel } from '../features/gifts/service.js';
 import { GiftStore } from '../features/gifts/store.js';
-import type { AdminNotice, GiftCycle, ViewState } from '../features/gifts/store.js';
+import type { AdminNotice, BirthdayGreeting, GiftCycle, ViewState } from '../features/gifts/store.js';
 
 export interface GiftDemoMember extends Birthday { readonly username: string }
 export interface GiftDemoEvent { readonly kind: 'system' | 'channel' | 'dm'; readonly text: string; readonly recipientId?: string }
@@ -26,6 +26,7 @@ class DemoGiftChannel implements GiftChannel {
   readonly demoted = new Set<string>();
   readonly messages = new Map<number, string>();
   readonly dms = new Map<number, string>();
+  readonly greetings = new Map<number, string>();
   readonly events: GiftDemoEvent[] = [];
   constructor(private readonly config: GiftConfig, private readonly members: readonly GiftDemoMember[]) {}
   private member(id: string) {
@@ -58,6 +59,13 @@ class DemoGiftChannel implements GiftChannel {
   }
   async findAnnouncement(cycle: GiftCycle) { return this.messages.get(cycle.id); }
   async canParticipate(id: string) { return (await this.inspect(id)).visible; }
+  async canGreetBirthday(id: string) { return this.canParticipate(id); }
+  async greetBirthday(g: BirthdayGreeting) {
+    const id = `demo-birthday-${g.id}`; this.greetings.set(g.id, id);
+    this.events.push({ kind: 'channel', text: `@here 🎂 ¡Feliz cumple, <@${g.userId}>! 🎉` });
+    return id;
+  }
+  async findBirthdayGreeting(g: BirthdayGreeting) { return this.greetings.get(g.id); }
   async sendAdminNotice(notice: AdminNotice) {
     const id = `demo-dm-${notice.id}`;
     this.dms.set(notice.id, id);

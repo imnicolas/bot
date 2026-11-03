@@ -73,7 +73,7 @@ Configurá estas variables en `.env` o `/etc/discord-bot.env` y reiniciá el ser
 | `FEATURE_SOCIAL_ENABLED` | `true` | Reacciones de ProBot y `grupo comando`. |
 | `FEATURE_MEALS_ENABLED` | `true` | Desayuno, almuerzo y cena con probabilidad 1/3. |
 | `FEATURE_LEVELS_ENABLED` | `false` | XP, avisos de nivel, `nivel`/`rank` y `ranking`/`top`/`niveles`. |
-| `FEATURE_GIFTS_ENABLED` | `false` | Organización de regalos en un canal privado, botones y comandos privilegiados `!regalo`. |
+| `FEATURE_GIFTS_ENABLED` | `false` | Regalos, reincorporación común y saludo de cumpleaños automáticos, botones y comandos privilegiados `!regalo`. |
 
 Sólo se acepta `true` o `false`; una configuración inválida impide arrancar. Apagar social, comidas o niveles oculta sus comandos en ayuda y demo, e ignora sus aliases. Los comandos apagados tampoco suman XP. Apagar niveles pausa la participación sin borrar SQLite; se puede reactivar conservando XP y cooldowns. Regalos tiene su configuración y autorización propias: sus comandos sólo funcionan en el canal privado configurado, y cuando está apagado responden que la función está desactivada.
 
@@ -90,8 +90,10 @@ Pepe retira el rol configurado `Cumpleañeri` **7 días antes** y verifica que e
 | `!regalo participantes @usuario` | Administrador o Gestionar canales | Lista participantes del regalo sin enviar menciones. |
 | `!regalo reincorporar @usuario` | Administrador o Gestionar canales | Devuelve el rol que retiró Pepe; en exclusiones administrativas, confirma la reincorporación humana. Cierra las adhesiones. |
 | `!regalo anunciar @usuario` | Administrador o Gestionar canales | Recupera o reintenta manualmente una convocatoria pendiente. |
+| Día del cumpleaños | Automático | Devuelve Cumpleañeri a miembros comunes, confirma acceso y saluda `@here 🎂 ¡Feliz cumple, @usuario! 🎉` una vez por año. |
+| `!regalo felicitar @usuario` | Administrador o Gestionar canales | Recupera un saludo incierto del cumpleaños de hoy tras revisar el canal. |
 
-La reincorporación es **siempre manual**. Al volver, el miembro puede leer el historial del canal. Para los dos administradores configurados en `GIFTS_ADMIN_IDS`, Pepe manda un recordatorio **por privado al otro administrador**, 7 días antes. La convocatoria en el canal espera a que una persona retire manualmente el acceso del cumpleañero y Pepe confirme que ya no puede verlo. Mientras conserve Administrador o la propiedad del servidor, la convocatoria permanece bloqueada. Pepe no modifica sus roles ni revierte su exclusión manual. Los avisos se registran en SQLite para evitar repeticiones tras reiniciar. Si un administrador no está configurado, se bloquea su convocatoria. La coordinación de quién llama y las transferencias quedan a cargo del grupo.
+La reincorporación común es **automática el día del cumpleaños** desde las 00:00 de `GIFTS_TIME_ZONE` (revisión cada minuto); `!regalo reincorporar` permite adelantarla. Al volver, el miembro puede leer el historial del canal. Para los dos administradores configurados en `GIFTS_ADMIN_IDS`, Pepe manda un recordatorio **por privado al otro administrador**, 7 días antes. La convocatoria espera a que una persona retire manualmente el acceso del cumpleañero. Pepe no modifica sus roles administrativos ni revierte exclusiones humanas: su reincorporación sigue siendo manual. Los avisos y saludos se registran en SQLite para evitar repeticiones tras reiniciar. La coordinación y las transferencias quedan a cargo del grupo.
 
 [Configuración, CSV ficticio, ejemplo de convocatoria y recuperación](docs/birthday-gifts.md).
 
