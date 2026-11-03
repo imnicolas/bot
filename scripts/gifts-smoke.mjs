@@ -320,6 +320,16 @@ export async function verifyGiftLifecycle(db, levels) {
     await emitMessage(manager, `!cumple <@${birthdayUser}>`);
     assert.match(posts.at(-1).content, /Necesitás Administrador/);
     members.get(manager).roles = managerRoles;
+    await service.tick(new Date('2027-11-05T12:00:00Z'));
+    assert.equal(members.get(birthdayUser).roles.includes(roleId), false);
+    await service.tick(new Date('2027-11-12T03:00:00Z'));
+    assert.equal(members.get(birthdayUser).roles.includes(roleId), true);
+    const greeting = posts.find(p => p.content?.includes(`¡Feliz cumple, <@${birthdayUser}>`));
+    assert.ok(greeting);
+    assert.deepEqual(greeting.allowed_mentions, { parse: ['everyone'], users: [birthdayUser], roles: [] });
+    const greetingCount = posts.filter(p => p.content?.includes('¡Feliz cumple')).length;
+    await new GiftService(config, new GiftStore(db), adapter).tick(new Date('2027-11-12T15:00:00Z'));
+    assert.equal(posts.filter(p => p.content?.includes('¡Feliz cumple')).length, greetingCount);
     await bot.stop();
     assert.equal(client.token, null);
     return { config, cycleId: cycle.id, adminId: admin, manualCycleId: manualCycle.id };

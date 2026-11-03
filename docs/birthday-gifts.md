@@ -1,6 +1,6 @@
 # Cumpleaños desde SQLite y retirada del rol Cumpleañeri
 
-Pepe lee cumpleaños de SQLite y **7 días antes retira el rol Cumpleañeri**. Confirma que el cumpleañero no vea ninguno de los canales protegidos y entonces publica `@here 🎁 ¡Organizamos el regalo!` en el canal de organización, con botones de participación. La reincorporación es manual. No lee Excel ni Google Sheets durante la ejecución.
+Pepe lee cumpleaños de SQLite y **7 días antes retira el rol Cumpleañeri**. Confirma la exclusión y publica la convocatoria de regalo con botones. **El día del cumpleaños devuelve el rol y saluda con la mención al cumpleañero y `@here`**, una vez por año. No lee Excel ni Google Sheets durante la ejecución.
 
 `!cumples` conserva la consulta pública del calendario: `persona — DD/MM`, ordenado por mes, día y nombre, sin menciones ni contactos. Lee sólo los cumpleaños del servidor donde se solicita, incluye todo el padrón y funciona también con `FEATURE_GIFTS_ENABLED=false`. Para listas extensas, `!cumples 2` muestra la segunda página. No inicia regalos ni cambia roles.
 
@@ -30,11 +30,13 @@ Pepe necesita **Gestionar roles** en el servidor, y Cumpleañeri debe estar por 
 | Momento | Acción |
 | --- | --- |
 | Arranque y cada minuto | Consulta los cumpleaños en SQLite. |
-| Desde 7 días antes hasta el cumpleaños | Guarda intención y rol en SQLite, retira únicamente Cumpleañeri a miembros comunes que lo tengan y vuelve a consultar permisos efectivos. |
+| Desde 7 días antes hasta la víspera | Guarda intención y rol en SQLite, retira únicamente Cumpleañeri a miembros comunes que lo tengan y vuelve a consultar permisos efectivos. |
 | Todas las exclusiones confirmadas | Publica una convocatoria con `@here`, nombre, fecha y botones **✅ Participo / Retirar participación**. No menciona al cumpleañero. |
 | Participación | Guarda adhesiones en SQLite; repetir el check no duplica participantes. La confirmación es privada y no acredita pagos. |
-| Día del cumpleaños | No devuelve el rol automáticamente. |
-| Reincorporación | Un organizador ejecuta `!regalo reincorporar @persona`; devuelve sólo el rol retirado y cierra el ciclo. |
+| Día del cumpleaños, desde las 00:00 locales | Devuelve Cumpleañeri a miembros comunes antes de saludar en el mismo canal con `@here 🎂 ¡Feliz cumple, @persona! 🎉`. Confirma acceso y guarda el saludo en SQLite. |
+| Reincorporación anticipada | `!regalo reincorporar @persona` devuelve sólo el rol retirado y cierra el ciclo. |
+
+Los ciclos comunes vencidos se reincorporan al recuperar el servicio o corregir la jerarquía. Nunca se vuelve a excluir por un cumpleaños pasado ni se envían saludos atrasados automáticamente. Un fallo individual no impide atender otros cumpleaños. Los saludos inciertos se buscan por su marcador entre los últimos 100 mensajes; si no aparecen, se exige revisar el canal y reintentar conscientemente con `!regalo felicitar @persona` durante el cumpleaños. La cuenta configurada sólo para DM mantiene esa excepción.
 
 Para un cumpleaños el **12/11**, empieza el **05/11**. Usa la zona horaria configurada, incluidos cruces de año; 29/02 se considera 28/02 en años no bisiestos. Si estuvo apagado, recupera cumpleaños todavía dentro de la ventana. Antes de publicar cualquier convocatoria verifica todas las exclusiones superpuestas.
 
@@ -50,9 +52,10 @@ Los comandos requieren Administrador o **Gestionar canales** en el canal de avis
 
 | Comando | Resultado |
 | --- | --- |
-| `!regalo estado` | Exclusiones pendientes, estados y cantidad de participantes. |
+| `!regalo estado` | Exclusiones, saludos pendientes, estados y cantidad de participantes. |
 | `!regalo participantes @persona` | Lista las adhesiones sin notificar a los mencionados. |
 | `!regalo reincorporar @persona` | Devuelve el rol retirado o confirma la reincorporación administrativa manual. |
+| `!regalo felicitar @persona` | Recupera un saludo incierto del cumpleaños de hoy, sin duplicar un envío confirmado. |
 | `!regalo anunciar @persona` | Recupera una convocatoria pendiente después de revalidar las exclusiones. |
 
 ## Carga privada de la base
@@ -82,7 +85,7 @@ SQLite conserva el rol concreto retirado, estado anual, mensaje y participantes.
 
 No cambies rol ni canal de avisos con exclusiones pendientes. El ID persistido impide devolver otro rol por un cambio de configuración. Las exclusiones del mecanismo anterior deben cerrarse antes de migrar a retirada de roles; no se convierten silenciosamente.
 
-Antes de desplegar, respaldá y migrá **la base activa**, conservando XP y cooldowns. No la sustituyas por la base de preparación. El esquema actual es 9 y conserva cumpleaños, contactos y categorías anteriores. No abras una base migrada con un ejecutable antiguo. Mantené la función apagada hasta probar el canal real con miembros ficticios.
+Antes de desplegar, respaldá y migrá **la base activa**, conservando XP y cooldowns. No la sustituyas por la base de preparación. El esquema 10 agrega el registro de saludos sin alterar cumpleaños, contactos ni ciclos anteriores. No abras una base migrada con un ejecutable antiguo; un rollback requiere un backup compatible. Validá permisos y jerarquía de roles antes de activar.
 
 ## Laboratorio y verificación
 

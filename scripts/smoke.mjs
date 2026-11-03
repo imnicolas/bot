@@ -58,6 +58,7 @@ try {
     assert.equal(new GiftStore(restored).get(gift.manualCycleId).exclusionMode, 'manual');
     assert.equal(new GiftStore(restored).get(gift.manualCycleId).state, 'restored');
     assert.equal(new GiftStore(restored).birthdays(gift.config.guildId).length, 3);
+    assert.ok(restored.prepare("SELECT count(*) FROM birthday_greetings WHERE state='sent'").pluck().get() > 0);
     assert.equal(new GiftStore(restored).adminNotice(gift.config.guildId, gift.adminId, '2026-11-12').state, 'sent');
     assert.equal(new GiftStore(restored).birthdays(importGuild).length, 2);
     assert.equal(new GiftRosterStore(restored).members(rosterGuild)[0].phone, '+0000001');

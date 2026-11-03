@@ -41,6 +41,22 @@ test('migra v7 con categoría gift por defecto sin perder cumpleaños ni contact
   assert.throws(() => upgraded.prepare('UPDATE gift_birthdays SET category=?').run('invalid'), /CHECK/);
 });
 
+test('migra v9 conservando un ciclo prepared y agrega saludos vacíos sin modificar cumpleaños', (t) => {
+  const f = fixture(t);
+  const path = join(f.directory, 'v9.sqlite');
+  const old = new Database(path);
+  for (const migration of migrations.slice(0, 9)) old.exec(migration);
+  old.prepare('INSERT INTO gift_birthdays VALUES (?,?,?,?,?)').run('1', '2', 'Persona ficticia', '31/10', 'gift');
+  old.prepare(`INSERT INTO gift_cycles (guild_id,channel_id,user_id,name,birthday,prior_view,state,access_role_id)
+    VALUES ('1','3','2','Persona ficticia','2026-10-31',1,'prepared','4')`).run();
+  old.pragma('user_version = 9'); old.close();
+  const upgraded = f.connect(path);
+  assert.equal(upgraded.pragma('user_version', { simple: true }), 10);
+  assert.deepEqual(upgraded.prepare('SELECT state,access_role_id FROM gift_cycles').get(), { state: 'prepared', access_role_id: '4' });
+  assert.equal(upgraded.prepare('SELECT day_month FROM gift_birthdays').pluck().get(), '31/10');
+  assert.equal(upgraded.prepare('SELECT count(*) FROM birthday_greetings').pluck().get(), 0);
+});
+
 test('rechaza bases futuras y archivos corruptos sin reemplazarlos', (t) => {
   const f = fixture(t);
   const futurePath = join(f.directory, 'future.sqlite');

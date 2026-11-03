@@ -4,6 +4,10 @@ import type { GiftConfig } from '../../config/gifts.js';
 
 export type ViewState = -1 | 0 | 1;
 export type CycleState = 'prepared' | 'hidden' | 'publishing' | 'announced' | 'restoring' | 'restored';
+export interface BirthdayGreeting {
+  readonly id: number; readonly userId: string; readonly birthday: string;
+  readonly state: 'pending' | 'sending' | 'sent'; readonly messageId: string | null;
+}
 export interface GiftCycle {
   readonly id: number;
   readonly guildId: string;
@@ -32,6 +36,23 @@ const columns = 'id, guild_id AS guildId, channel_id AS channelId, user_id AS us
 
 export class GiftStore {
   constructor(private readonly db: Database.Database) {}
+
+  greeting(config: GiftConfig, userId: string, birthday: string): BirthdayGreeting {
+    this.db.prepare(`INSERT INTO birthday_greetings (guild_id,channel_id,user_id,birthday,state)
+      VALUES (?,?,?,?,'pending') ON CONFLICT DO NOTHING`).run(config.guildId, config.channelId, userId, birthday);
+    return this.db.prepare<[string, string, string, string], BirthdayGreeting>(`SELECT id,user_id AS userId,
+      birthday,state,message_id AS messageId FROM birthday_greetings WHERE guild_id=? AND channel_id=? AND user_id=? AND birthday=?`)
+      .get(config.guildId, config.channelId, userId, birthday)!;
+  }
+
+  greetingState(id: number, state: BirthdayGreeting['state'], messageId?: string): void {
+    this.db.prepare('UPDATE birthday_greetings SET state=?,message_id=COALESCE(?,message_id) WHERE id=?').run(state, messageId ?? null, id);
+  }
+
+  pendingGreetings(config: GiftConfig): BirthdayGreeting[] {
+    return this.db.prepare<[string, string], BirthdayGreeting>(`SELECT id,user_id AS userId,birthday,state,message_id AS messageId
+      FROM birthday_greetings WHERE guild_id=? AND channel_id=? AND state!='sent' ORDER BY birthday,id LIMIT 20`).all(config.guildId, config.channelId);
+  }
 
   import(guildId: string, birthdays: readonly Birthday[]): void {
     // Upsert only: omission from a later CSV never silently deletes an existing birthday or exclusion.
